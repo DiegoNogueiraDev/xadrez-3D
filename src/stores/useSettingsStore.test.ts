@@ -21,6 +21,7 @@ describe('useSettingsStore', () => {
       quality: 'high',
       shadowsEnabled: true,
       particlesEnabled: true,
+      muted: false,
     });
   });
 
@@ -76,6 +77,30 @@ describe('useSettingsStore', () => {
 
       useSettingsStore.getState().toggleParticles();
       expect(useSettingsStore.getState().particlesEnabled).toBe(true);
+    });
+
+    it('toggleMute flips muted state', () => {
+      expect(useSettingsStore.getState().muted).toBe(false);
+
+      useSettingsStore.getState().toggleMute();
+      expect(useSettingsStore.getState().muted).toBe(true);
+
+      useSettingsStore.getState().toggleMute();
+      expect(useSettingsStore.getState().muted).toBe(false);
+    });
+
+    it('toggleMute persists muted to localStorage', () => {
+      useSettingsStore.getState().toggleMute();
+      expect(localStorageMock.setItem).toHaveBeenCalled();
+      const lastCall = localStorageMock.setItem.mock.calls.at(-1)!;
+      const saved = JSON.parse(lastCall[1]);
+      expect(saved.muted).toBe(true);
+    });
+  });
+
+  describe('muted initial state', () => {
+    it('has muted false by default', () => {
+      expect(useSettingsStore.getState().muted).toBe(false);
     });
   });
 });

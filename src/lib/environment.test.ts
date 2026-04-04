@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ENVIRONMENT_CONFIG } from './environment';
+import { ENVIRONMENT_CONFIG, EnvironmentConfig } from './environment';
 
 describe('ENVIRONMENT_CONFIG', () => {
   it('exports an object with path, sourceId, resolution, and label', () => {
@@ -17,13 +17,21 @@ describe('ENVIRONMENT_CONFIG', () => {
     expect(ENVIRONMENT_CONFIG.resolution).toBe('1k');
   });
 
-  it('sourceId is a non-empty string matching a Polyhaven asset', () => {
-    expect(typeof ENVIRONMENT_CONFIG.sourceId).toBe('string');
-    expect(ENVIRONMENT_CONFIG.sourceId.length).toBeGreaterThan(0);
+  it('sourceId matches the Polyhaven brown_photostudio_02 asset', () => {
+    expect(ENVIRONMENT_CONFIG.sourceId).toBe('brown_photostudio_02');
   });
 
-  it('label is a descriptive non-empty string', () => {
-    expect(typeof ENVIRONMENT_CONFIG.label).toBe('string');
-    expect(ENVIRONMENT_CONFIG.label.length).toBeGreaterThan(0);
+  it('label describes the HDRI environment', () => {
+    expect(ENVIRONMENT_CONFIG.label).toBe('Brown Photo Studio');
+  });
+
+  it('path ends with .hdr extension for HDR format', () => {
+    expect(ENVIRONMENT_CONFIG.path).toMatch(/\.hdr$/);
+  });
+
+  it('config satisfies EnvironmentConfig interface', () => {
+    const config: EnvironmentConfig = ENVIRONMENT_CONFIG;
+    expect(config).toBeDefined();
+    expect(Object.keys(config)).toEqual(['path', 'sourceId', 'resolution', 'label']);
   });
 });

@@ -7,14 +7,18 @@ interface SettingsState {
   quality: QualityPreset;
   shadowsEnabled: boolean;
   particlesEnabled: boolean;
+  muted: boolean;
 
   setVolume: (v: number) => void;
   setQuality: (q: QualityPreset) => void;
   toggleShadows: () => void;
   toggleParticles: () => void;
+  toggleMute: () => void;
 }
 
-function loadFromStorage(): Partial<SettingsState> {
+type SettingsData = Pick<SettingsState, 'volume' | 'quality' | 'shadowsEnabled' | 'particlesEnabled' | 'muted'>;
+
+function loadFromStorage(): Partial<SettingsData> {
   try {
     const saved = localStorage.getItem('chess3d-settings');
     if (saved) return JSON.parse(saved);
@@ -31,6 +35,7 @@ function saveToStorage(state: Partial<SettingsState>) {
         quality: state.quality,
         shadowsEnabled: state.shadowsEnabled,
         particlesEnabled: state.particlesEnabled,
+        muted: state.muted,
       })
     );
   } catch {}
@@ -41,6 +46,7 @@ const defaults = {
   quality: 'high' as QualityPreset,
   shadowsEnabled: true,
   particlesEnabled: true,
+  muted: false,
 };
 
 const stored = loadFromStorage();
@@ -70,5 +76,11 @@ export const useSettingsStore = create<SettingsState>((set, get) => ({
     const next = !get().particlesEnabled;
     set({ particlesEnabled: next });
     saveToStorage({ ...get(), particlesEnabled: next });
+  },
+
+  toggleMute: () => {
+    const next = !get().muted;
+    set({ muted: next });
+    saveToStorage({ ...get(), muted: next });
   },
 }));

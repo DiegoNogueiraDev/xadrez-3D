@@ -1,8 +1,11 @@
 import { useRef, Component, type ReactNode } from 'react';
 import * as THREE from 'three';
+import { animated } from '@react-spring/three';
 import { COLORS, PIECE_SCALE } from '../utils/constants';
 import type { PieceSymbol, Color } from 'chess.js';
 import { usePieceModel } from '../hooks/usePieceModel';
+import { useSelectionAnimation } from '../hooks/useSelectionAnimation';
+import { SELECTION_CONFIG } from '../lib/selectionConfig';
 
 interface ChessPieceProps {
   type: PieceSymbol;
@@ -81,12 +84,14 @@ export default function ChessPiece({
   onPointerOut,
 }: ChessPieceProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const { scale, emissiveIntensity } = useSelectionAnimation(isSelected);
   const procedural = <ProceduralPiece type={type} color={color} />;
 
   return (
-    <group
+    <animated.group
       ref={groupRef}
       position={position}
+      scale={scale}
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
@@ -99,8 +104,13 @@ export default function ChessPiece({
         <GLTFPiece type={type} color={color} />
       </PieceErrorBoundary>
       {isSelected && (
-        <pointLight position={[0, 1, 0]} intensity={0.5} color="#ffff00" distance={2} />
+        <pointLight
+          position={[0, 1, 0]}
+          intensity={0.5}
+          color={SELECTION_CONFIG.emissiveColor}
+          distance={2}
+        />
       )}
-    </group>
+    </animated.group>
   );
 }
