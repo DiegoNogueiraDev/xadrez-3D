@@ -33,6 +33,21 @@ describe('QUALITY_PRESETS', () => {
     expect(high.antialias).toBe(true);
   });
 
+  it('low: particleCountMultiplier=0, textureResolution=512', () => {
+    expect(QUALITY_PRESETS.low.particleCountMultiplier).toBe(0);
+    expect(QUALITY_PRESETS.low.textureResolution).toBe('512');
+  });
+
+  it('medium: particleCountMultiplier=0.5, textureResolution=1024', () => {
+    expect(QUALITY_PRESETS.medium.particleCountMultiplier).toBe(0.5);
+    expect(QUALITY_PRESETS.medium.textureResolution).toBe('1024');
+  });
+
+  it('high: particleCountMultiplier=1.0, textureResolution=2048', () => {
+    expect(QUALITY_PRESETS.high.particleCountMultiplier).toBe(1);
+    expect(QUALITY_PRESETS.high.textureResolution).toBe('2048');
+  });
+
   it('each preset has all required fields', () => {
     for (const preset of Object.values(QUALITY_PRESETS)) {
       expect(preset).toHaveProperty('shadows');
@@ -40,6 +55,8 @@ describe('QUALITY_PRESETS', () => {
       expect(preset).toHaveProperty('pixelRatio');
       expect(preset).toHaveProperty('antialias');
       expect(preset).toHaveProperty('shadowMapSize');
+      expect(preset).toHaveProperty('particleCountMultiplier');
+      expect(preset).toHaveProperty('textureResolution');
     }
   });
 });

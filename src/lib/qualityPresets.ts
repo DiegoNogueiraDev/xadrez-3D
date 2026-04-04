@@ -1,11 +1,15 @@
 import type { QualityPreset } from '../stores/useSettingsStore';
 
+export type TextureResolution = '512' | '1024' | '2048';
+
 export interface QualitySettings {
   shadows: boolean;
   particles: boolean;
   pixelRatio: number;
   antialias: boolean;
   shadowMapSize: number;
+  particleCountMultiplier: number;
+  textureResolution: TextureResolution;
 }
 
 export const QUALITY_PRESETS: Record<QualityPreset, QualitySettings> = {
@@ -15,6 +19,8 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualitySettings> = {
     pixelRatio: 1,
     antialias: false,
     shadowMapSize: 512,
+    particleCountMultiplier: 0,
+    textureResolution: '512',
   },
   medium: {
     shadows: true,
@@ -22,6 +28,8 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualitySettings> = {
     pixelRatio: 1.5,
     antialias: true,
     shadowMapSize: 1024,
+    particleCountMultiplier: 0.5,
+    textureResolution: '1024',
   },
   high: {
     shadows: true,
@@ -29,6 +37,8 @@ export const QUALITY_PRESETS: Record<QualityPreset, QualitySettings> = {
     pixelRatio: 2,
     antialias: true,
     shadowMapSize: 2048,
+    particleCountMultiplier: 1,
+    textureResolution: '2048',
   },
 };
 
