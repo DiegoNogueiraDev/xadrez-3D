@@ -4,72 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Xadrez 3D</title>
-  <link rel="stylesheet" href="/src/styles/main.css" />
 </head>
 <body>
-  <div id="app">
-    <canvas id="game-canvas"></canvas>
-    <div id="ui-overlay">
-      <div id="lobby-screen">
-        <div class="lobby-container">
-          <h1>♚ Xadrez 3D ♚</h1>
-          <p class="subtitle">Jogo de xadrez com peças 3D animadas</p>
-          <div class="lobby-actions">
-            <button id="btn-create-game" class="btn btn-primary">Criar Partida</button>
-            <div class="divider"><span>ou</span></div>
-            <div class="join-section">
-              <input id="input-game-id" type="text" placeholder="Cole o código da partida" />
-              <button id="btn-join-game" class="btn btn-secondary">Entrar</button>
-            </div>
-          </div>
-          <div id="waiting-section" class="hidden">
-            <p>Aguardando oponente...</p>
-            <div class="share-link">
-              <input id="share-link-input" type="text" readonly />
-              <button id="btn-copy-link" class="btn btn-small">Copiar</button>
-            </div>
-            <div id="connection-status" class="status-indicator">
-              <span class="dot"></span>
-              <span class="status-text">Aguardando conexão...</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div id="game-ui" class="hidden">
-        <div id="top-panel">
-          <div id="opponent-captured" class="captured-pieces"></div>
-          <div id="game-status-bar">
-            <span id="turn-indicator"></span>
-            <span id="game-status-text"></span>
-            <div id="connection-indicator">
-              <span class="dot"></span>
-              <span class="conn-text">Conectado</span>
-            </div>
-          </div>
-        </div>
-        <div id="side-panel">
-          <h3>Movimentos</h3>
-          <div id="move-history"></div>
-          <div class="side-panel-actions">
-            <button id="btn-new-game" class="btn btn-small">Nova Partida</button>
-            <button id="btn-resign" class="btn btn-small btn-danger">Abandonar</button>
-          </div>
-        </div>
-        <div id="bottom-panel">
-          <div id="player-captured" class="captured-pieces"></div>
-        </div>
-        <div id="promotion-dialog" class="hidden">
-          <h3>Promover peão para:</h3>
-          <div class="promotion-options">
-            <button data-piece="q" class="promo-btn">♛ Rainha</button>
-            <button data-piece="r" class="promo-btn">♜ Torre</button>
-            <button data-piece="b" class="promo-btn">♝ Bispo</button>
-            <button data-piece="n" class="promo-btn">♞ Cavalo</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <script type="module" src="/src/main.ts"></script>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
 </body>
 </html>
