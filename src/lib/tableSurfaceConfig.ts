@@ -8,10 +8,10 @@ export interface TableSurfaceConfig {
 }
 
 export const TABLE_SURFACE_CONFIG: TableSurfaceConfig = {
-  size: 14,
-  position: [0, -0.05, 0],
-  color: '#2D4F2D',
-  roughness: 0.9,
+  size: 16,
+  position: [0, -0.08, 0],
+  color: '#1A0E06',
+  roughness: 0.75,
   metalness: 0,
-  materialType: 'felt',
+  materialType: 'wood',
 };

@@ -22,29 +22,29 @@ export interface LightingSetup {
 
 export const LIGHTING_CONFIG: LightingSetup = {
   key: {
-    position: [5, 10, 5],
-    intensity: 2.0,
+    position: [4, 8, 3],
+    intensity: 0.8,
     castShadow: true,
     shadowMapSize: 2048,
-    color: '#FFF5E6',
+    color: '#FFD49E',
   },
   fill: {
-    position: [-5, 5, -5],
-    intensity: 0.5,
+    position: [-4, 4, -4],
+    intensity: 0.2,
     castShadow: false,
     shadowMapSize: 0,
-    color: '#E6EEFF',
+    color: '#8090B0',
   },
   rim: {
-    position: [0, 8, -8],
-    intensity: 0.7,
+    position: [0, 6, -6],
+    intensity: 0.3,
     castShadow: false,
     shadowMapSize: 0,
-    color: '#FFFFFF',
+    color: '#A0A0C0',
   },
   ambient: {
-    intensity: 0.3,
-    color: '#FFFFFF',
+    intensity: 0.15,
+    color: '#E8DDD0',
   },
 };
 

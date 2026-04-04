@@ -5,7 +5,9 @@ export default function SceneEnvironment() {
   return (
     <Environment
       files={ENVIRONMENT_CONFIG.path}
-      background={false}
+      background={true}
+      backgroundBlurriness={0.6}
+      environmentIntensity={0.4}
     />
   );
 }

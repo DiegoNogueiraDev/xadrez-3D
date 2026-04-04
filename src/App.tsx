@@ -30,8 +30,8 @@ export default function App() {
   };
 
   return (
-    <div data-testid="chess-app" className="relative min-h-screen bg-neutral-900 text-white">
-      <h1 className="absolute top-0 left-0 right-0 text-2xl font-bold text-center py-4 z-20 pointer-events-none">
+    <div data-testid="chess-app" className="relative min-h-screen bg-[#0A0A0F] text-white">
+      <h1 className="absolute top-0 left-0 right-0 text-2xl font-bold text-center py-4 z-20 pointer-events-none font-serif tracking-wider text-amber-100/80">
         Xadrez 3D
       </h1>
 

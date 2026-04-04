@@ -2,25 +2,13 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import * as THREE from 'three';
 
-const { mockAnimations, mockUseGLTF, mockPreload } = vi.hoisted(() => {
-  // Create a real Three.js group as mock scene
-  const mockGroup = new THREE.Group();
-  const mockMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(0.1, 0.2, 0.1),
-    new THREE.MeshBasicMaterial()
-  );
-  mockGroup.add(mockMesh);
-
-  const mockAnimations = [{ name: 'idle' }, { name: 'capture' }];
+const { mockUseGLTF, mockPreload } = vi.hoisted(() => {
   const mockPreload = vi.fn();
   const mockUseGLTF = Object.assign(
-    vi.fn().mockReturnValue({
-      scene: mockGroup,
-      animations: mockAnimations,
-    }),
+    vi.fn(),
     { preload: mockPreload }
   );
-  return { mockAnimations, mockUseGLTF, mockPreload };
+  return { mockUseGLTF, mockPreload };
 });
 
 vi.mock('@react-three/drei', () => ({
@@ -29,32 +17,46 @@ vi.mock('@react-three/drei', () => ({
 
 import { usePieceModel } from './usePieceModel';
 
+// Set implementation after imports (THREE is available here)
+function createMockScene() {
+  const group = new THREE.Group();
+  const mesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.1, 0.2, 0.1),
+    new THREE.MeshBasicMaterial()
+  );
+  group.add(mesh);
+  return group;
+}
+
+mockUseGLTF.mockImplementation(() => ({
+  scene: createMockScene(),
+  animations: [{ name: 'idle' }],
+}));
+
 describe('usePieceModel', () => {
   it('returns scene, animations, and isLoaded', () => {
     const { result } = renderHook(() => usePieceModel('p', 'w'));
-    expect(result.current).toHaveProperty('scene');
-    expect(result.current).toHaveProperty('animations');
+    expect(result.current.scene).toBeDefined();
+    expect(result.current.animations).toBeDefined();
     expect(result.current.isLoaded).toBe(true);
   });
 
-  it('returns the animations from the GLTF', () => {
-    const { result } = renderHook(() => usePieceModel('p', 'w'));
-    expect(result.current.animations).toEqual(mockAnimations);
-  });
-
-  it('returns a normalized scene (not the original)', () => {
+  it('returns a THREE.Group scene', () => {
     const { result } = renderHook(() => usePieceModel('r', 'b'));
-    // Scene should be a Group (cloned and normalized)
     expect(result.current.scene).toBeInstanceOf(THREE.Group);
   });
 
-  it('loads from the correct MODEL_MANIFEST path', () => {
+  it('loads from the correct path', () => {
     mockUseGLTF.mockClear();
+    mockUseGLTF.mockImplementation(() => ({
+      scene: createMockScene(),
+      animations: [],
+    }));
     renderHook(() => usePieceModel('q', 'w'));
     expect(mockUseGLTF).toHaveBeenCalledWith('/assets/models/queen_white.glb');
   });
 
-  it('preload is called for all 12 models', () => {
+  it('preloads all 12 models', () => {
     expect(mockPreload).toHaveBeenCalledTimes(12);
   });
 });

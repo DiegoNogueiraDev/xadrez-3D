@@ -6,8 +6,8 @@ export interface EnvironmentConfig {
 }
 
 export const ENVIRONMENT_CONFIG: EnvironmentConfig = {
-  path: '/assets/environment/studio.hdr',
-  sourceId: 'brown_photostudio_02',
+  path: '/assets/environment/medieval.hdr',
+  sourceId: 'abandoned_hall_01',
   resolution: '1k',
-  label: 'Brown Photo Studio',
+  label: 'Medieval Hall',
 };

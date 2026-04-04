@@ -1,39 +1,45 @@
-import { Text } from '@react-three/drei';
-import { BOARD_SIZE, SQUARE_SIZE, COLORS, BOARD_OFFSET } from '../utils/constants';
+import { Suspense, useMemo } from 'react';
+import { Text, useGLTF } from '@react-three/drei';
+import { BOARD_SIZE, SQUARE_SIZE, BOARD_OFFSET } from '../utils/constants';
 import BoardSquare from './BoardSquare';
 
-export default function ChessBoard() {
-  const squares: JSX.Element[] = [];
+function GLTFBoard() {
+  const { scene } = useGLTF('/assets/models/board.glb');
+  const cloned = useMemo(() => {
+    const c = scene.clone();
+    // Fix zero-scale nodes (same issue as pieces)
+    c.traverse((node) => {
+      if (node.scale.x === 0 || node.scale.y === 0 || node.scale.z === 0) {
+        node.scale.set(1, 1, 1);
+      }
+    });
+    return c;
+  }, [scene]);
 
+  return (
+    <group position={[0, -0.06, 0]}>
+      <primitive object={cloned} />
+    </group>
+  );
+}
+
+// Invisible interaction squares for raycasting (click detection)
+function InteractionSquares() {
+  const squares: JSX.Element[] = [];
   for (let file = 0; file < BOARD_SIZE; file++) {
     for (let rank = 0; rank < BOARD_SIZE; rank++) {
       squares.push(<BoardSquare key={`${file}-${rank}`} file={file} rank={rank} />);
     }
   }
+  return <group>{squares}</group>;
+}
 
-  const borderThickness = 0.3;
-  const boardWidth = BOARD_SIZE * SQUARE_SIZE;
-  const totalWidth = boardWidth + borderThickness * 2;
-
+function CoordinateLabels() {
   const fileLabels = 'abcdefgh'.split('');
   const rankLabels = '12345678'.split('');
 
   return (
     <group>
-      {/* Squares */}
-      {squares}
-
-      {/* Border */}
-      <mesh
-        position={[0, -0.11, 0]}
-        receiveShadow
-        name="board-border"
-      >
-        <boxGeometry args={[totalWidth, 0.1, totalWidth]} />
-        <meshStandardMaterial color={COLORS.boardBorder} roughness={0.6} metalness={0.2} />
-      </mesh>
-
-      {/* File labels (a-h) */}
       {fileLabels.map((label, i) => (
         <Text
           key={`file-${label}`}
@@ -47,8 +53,6 @@ export default function ChessBoard() {
           {label}
         </Text>
       ))}
-
-      {/* Rank labels (1-8) */}
       {rankLabels.map((label, i) => (
         <Text
           key={`rank-${label}`}
@@ -62,6 +66,41 @@ export default function ChessBoard() {
           {label}
         </Text>
       ))}
+    </group>
+  );
+}
+
+// Procedural fallback board (simple colored squares)
+function ProceduralBoard() {
+  const squares: JSX.Element[] = [];
+  for (let file = 0; file < BOARD_SIZE; file++) {
+    for (let rank = 0; rank < BOARD_SIZE; rank++) {
+      squares.push(<BoardSquare key={`${file}-${rank}`} file={file} rank={rank} />);
+    }
+  }
+
+  const boardWidth = BOARD_SIZE * SQUARE_SIZE;
+  const totalWidth = boardWidth + 0.6;
+
+  return (
+    <group>
+      {squares}
+      <mesh position={[0, -0.11, 0]} receiveShadow name="board-border">
+        <boxGeometry args={[totalWidth, 0.1, totalWidth]} />
+        <meshStandardMaterial color="#5C3A1E" roughness={0.6} metalness={0.2} />
+      </mesh>
+    </group>
+  );
+}
+
+export default function ChessBoard() {
+  return (
+    <group>
+      <Suspense fallback={<ProceduralBoard />}>
+        <GLTFBoard />
+        <InteractionSquares />
+      </Suspense>
+      <CoordinateLabels />
     </group>
   );
 }
