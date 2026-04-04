@@ -1,6 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import ChessBoard from './ChessBoard';
+import ChessPieces from './ChessPieces';
 
 export default function ChessScene() {
   return (
@@ -26,6 +27,7 @@ export default function ChessScene() {
         shadow-mapSize-height={2048}
       />
       <ChessBoard />
+      <ChessPieces />
     </Canvas>
   );
 }
