@@ -2,12 +2,58 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface LobbyProps {
-  onCreateGame: () => void;
-  onJoinGame: (gameId: string) => void;
+  onCreateGame: () => Promise<string>;
+  onJoinGame: (gameId: string) => Promise<void>;
+  onLocalGame: () => void;
+  createdGameId: string | null;
+  connectionStatus: string;
 }
 
-export default function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
+export default function Lobby({
+  onCreateGame,
+  onJoinGame,
+  onLocalGame,
+  createdGameId,
+  connectionStatus,
+}: LobbyProps) {
   const [gameId, setGameId] = useState('');
+  const [error, setError] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const handleCreate = async () => {
+    setError('');
+    setIsCreating(true);
+    try {
+      await onCreateGame();
+    } catch (err) {
+      setError('Erro ao criar jogo. Tente novamente.');
+      setIsCreating(false);
+    }
+  };
+
+  const handleJoin = async () => {
+    if (!gameId.trim()) return;
+    setError('');
+    setIsJoining(true);
+    try {
+      await onJoinGame(gameId.trim());
+    } catch (err) {
+      setError('Erro ao conectar. Verifique o ID e tente novamente.');
+      setIsJoining(false);
+    }
+  };
+
+  const handleCopy = () => {
+    if (createdGameId) {
+      navigator.clipboard.writeText(createdGameId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const isWaiting = createdGameId && connectionStatus !== 'connected';
 
   return (
     <div
@@ -24,36 +70,85 @@ export default function Lobby({ onCreateGame, onJoinGame }: LobbyProps) {
           Xadrez 3D
         </h2>
 
-        <div className="space-y-4">
-          <button
-            onClick={onCreateGame}
-            className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg transition-colors"
-          >
-            Criar Jogo
-          </button>
-
-          <div className="flex items-center gap-2 text-neutral-400">
-            <div className="flex-1 h-px bg-neutral-600" />
-            <span className="text-sm">ou</span>
-            <div className="flex-1 h-px bg-neutral-600" />
+        {error && (
+          <div className="mb-4 p-3 bg-red-900/50 border border-red-700 rounded-lg text-red-200 text-sm text-center">
+            {error}
           </div>
+        )}
 
-          <input
-            type="text"
-            placeholder="Game ID"
-            value={gameId}
-            onChange={(e) => setGameId(e.target.value)}
-            className="w-full py-3 px-4 bg-neutral-900 border border-neutral-600 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 transition-colors"
-          />
+        {isWaiting ? (
+          <div className="space-y-4 text-center">
+            <div className="text-neutral-300 text-sm">
+              Aguardando oponente...
+            </div>
 
-          <button
-            onClick={() => onJoinGame(gameId)}
-            disabled={!gameId.trim()}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
-          >
-            Entrar
-          </button>
-        </div>
+            <div className="flex items-center gap-2 bg-neutral-900 border border-neutral-600 rounded-lg p-3">
+              <span className="flex-1 font-mono text-lg text-white tracking-wider text-center">
+                {createdGameId}
+              </span>
+              <button
+                onClick={handleCopy}
+                className="px-3 py-1.5 bg-neutral-700 hover:bg-neutral-600 text-sm text-white rounded transition-colors"
+              >
+                {copied ? 'Copiado!' : 'Copiar'}
+              </button>
+            </div>
+
+            <div className="text-neutral-500 text-xs">
+              Compartilhe este ID com seu oponente
+            </div>
+
+            <div className="flex justify-center">
+              <div className="w-6 h-6 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <button
+              onClick={handleCreate}
+              disabled={isCreating}
+              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-800 disabled:cursor-wait text-white font-semibold rounded-lg transition-colors"
+            >
+              {isCreating ? 'Criando...' : 'Criar Jogo Online'}
+            </button>
+
+            <div className="flex items-center gap-2 text-neutral-400">
+              <div className="flex-1 h-px bg-neutral-600" />
+              <span className="text-sm">ou</span>
+              <div className="flex-1 h-px bg-neutral-600" />
+            </div>
+
+            <input
+              type="text"
+              placeholder="Game ID"
+              value={gameId}
+              onChange={(e) => setGameId(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleJoin()}
+              className="w-full py-3 px-4 bg-neutral-900 border border-neutral-600 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 transition-colors"
+            />
+
+            <button
+              onClick={handleJoin}
+              disabled={!gameId.trim() || isJoining}
+              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+            >
+              {isJoining ? 'Conectando...' : 'Entrar'}
+            </button>
+
+            <div className="flex items-center gap-2 text-neutral-400">
+              <div className="flex-1 h-px bg-neutral-600" />
+              <span className="text-sm">ou</span>
+              <div className="flex-1 h-px bg-neutral-600" />
+            </div>
+
+            <button
+              onClick={onLocalGame}
+              className="w-full py-3 px-4 bg-neutral-700 hover:bg-neutral-600 text-white font-semibold rounded-lg transition-colors"
+            >
+              Jogar Local
+            </button>
+          </div>
+        )}
       </motion.div>
     </div>
   );

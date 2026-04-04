@@ -1,4 +1,4 @@
-import { SQUARE_SIZE, BOARD_OFFSET } from '../utils/constants';
+import { SQUARE_SIZE, BOARD_OFFSET, INTERACTION_BOX_Y, INTERACTION_BOX_HEIGHT } from '../utils/constants';
 import { useSquareInteraction } from '../hooks/useSquareInteraction';
 
 interface BoardSquareProps {
@@ -15,13 +15,13 @@ export default function BoardSquare({ file, rank }: BoardSquareProps) {
 
   return (
     <mesh
-      position={[x, 0.02, z]}
+      position={[x, INTERACTION_BOX_Y, z]}
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
       name={`square-${squareName}-${isLight ? 'light' : 'dark'}`}
     >
-      <boxGeometry args={[SQUARE_SIZE, 0.05, SQUARE_SIZE]} />
+      <boxGeometry args={[SQUARE_SIZE, INTERACTION_BOX_HEIGHT, SQUARE_SIZE]} />
       <meshBasicMaterial transparent opacity={0} depthWrite={false} />
     </mesh>
   );

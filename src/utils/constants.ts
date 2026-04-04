@@ -19,6 +19,9 @@ export const COLORS = {
 export const PIECE_SCALE = 0.4;
 export const PIECE_HEIGHT_OFFSET = 0.01;
 
+export const INTERACTION_BOX_Y = 0.5;
+export const INTERACTION_BOX_HEIGHT = 1.0;
+
 export const ANIMATION = {
   moveDuration: 400,
   captureDuration: 300,

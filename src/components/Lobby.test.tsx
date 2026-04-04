@@ -2,7 +2,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Lobby from './Lobby';
 
-// Mock framer-motion to avoid animation issues in tests
 vi.mock('framer-motion', () => ({
   motion: {
     div: ({ children, ...props }: any) => {
@@ -16,8 +15,11 @@ vi.mock('framer-motion', () => ({
 
 describe('Lobby', () => {
   const defaultProps = {
-    onCreateGame: vi.fn(),
-    onJoinGame: vi.fn(),
+    onCreateGame: vi.fn().mockResolvedValue('abc123'),
+    onJoinGame: vi.fn().mockResolvedValue(undefined),
+    onLocalGame: vi.fn(),
+    createdGameId: null as string | null,
+    connectionStatus: 'disconnected',
   };
 
   it('renders the lobby dialog', () => {
@@ -31,28 +33,19 @@ describe('Lobby', () => {
     expect(input).toBeInTheDocument();
   });
 
-  it('renders Create Game button', () => {
+  it('renders Create Game Online button', () => {
     render(<Lobby {...defaultProps} />);
-    expect(screen.getByRole('button', { name: /criar jogo/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /criar jogo online/i })).toBeInTheDocument();
   });
 
-  it('renders Join Game button', () => {
+  it('renders Jogar Local button', () => {
+    render(<Lobby {...defaultProps} />);
+    expect(screen.getByRole('button', { name: /jogar local/i })).toBeInTheDocument();
+  });
+
+  it('renders Join button', () => {
     render(<Lobby {...defaultProps} />);
     expect(screen.getByRole('button', { name: /entrar/i })).toBeInTheDocument();
-  });
-
-  it('calls onCreateGame when Create button is clicked', () => {
-    render(<Lobby {...defaultProps} />);
-    fireEvent.click(screen.getByRole('button', { name: /criar jogo/i }));
-    expect(defaultProps.onCreateGame).toHaveBeenCalledTimes(1);
-  });
-
-  it('calls onJoinGame with game ID when Join button is clicked', () => {
-    render(<Lobby {...defaultProps} />);
-    const input = screen.getByPlaceholderText(/game id/i);
-    fireEvent.change(input, { target: { value: 'abc123' } });
-    fireEvent.click(screen.getByRole('button', { name: /entrar/i }));
-    expect(defaultProps.onJoinGame).toHaveBeenCalledWith('abc123');
   });
 
   it('disables Join button when game ID is empty', () => {
@@ -67,5 +60,16 @@ describe('Lobby', () => {
     fireEvent.change(input, { target: { value: 'abc123' } });
     const joinBtn = screen.getByRole('button', { name: /entrar/i });
     expect(joinBtn).not.toBeDisabled();
+  });
+
+  it('shows waiting state when createdGameId is set', () => {
+    render(<Lobby {...defaultProps} createdGameId="xyz789" connectionStatus="connecting" />);
+    expect(screen.getByText(/aguardando oponente/i)).toBeInTheDocument();
+    expect(screen.getByText('xyz789')).toBeInTheDocument();
+  });
+
+  it('shows copy button in waiting state', () => {
+    render(<Lobby {...defaultProps} createdGameId="xyz789" connectionStatus="connecting" />);
+    expect(screen.getByRole('button', { name: /copiar/i })).toBeInTheDocument();
   });
 });

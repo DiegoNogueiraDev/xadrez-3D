@@ -1,7 +1,6 @@
 import { SQUARE_SIZE, BOARD_OFFSET, PIECE_HEIGHT_OFFSET } from '../utils/constants';
 import { useGameStore } from '../stores/useGameStore';
 import ChessPiece from './ChessPiece';
-import { useSquareInteraction } from '../hooks/useSquareInteraction';
 import type { PieceSymbol, Color } from 'chess.js';
 
 function InteractivePiece({
@@ -15,8 +14,7 @@ function InteractivePiece({
   position: [number, number, number];
   square: string;
 }) {
-  const { onClick, onPointerOver, onPointerOut, isSelected } =
-    useSquareInteraction(square);
+  const isSelected = useGameStore((s) => s.selectedSquare === square);
 
   return (
     <ChessPiece
@@ -25,9 +23,6 @@ function InteractivePiece({
       position={position}
       square={square}
       isSelected={isSelected}
-      onClick={onClick}
-      onPointerOver={onPointerOver}
-      onPointerOut={onPointerOut}
     />
   );
 }

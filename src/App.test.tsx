@@ -51,6 +51,19 @@ vi.mock('./hooks/useAudioSync', () => ({
   useAudioSync: vi.fn(),
 }));
 
+vi.mock('./hooks/useNetwork', () => {
+  return {
+    useNetwork: () => ({
+      createGame: vi.fn().mockResolvedValue('abc123'),
+      joinGame: vi.fn().mockResolvedValue(undefined),
+      startLocalGame: vi.fn(),
+      disconnect: vi.fn(),
+      connectionStatus: 'disconnected',
+      gameId: null,
+    }),
+  };
+});
+
 vi.mock('@react-three/postprocessing', () => ({
   EffectComposer: ({ children }: any) => children,
   Bloom: () => null,
@@ -96,10 +109,9 @@ describe('App', () => {
     expect(screen.getByTestId('r3f-canvas')).toBeInTheDocument();
   });
 
-  it('transitions from lobby to playing when Create Game is clicked', () => {
+  it('renders Jogar Local button in lobby', () => {
     render(<App />);
-    fireEvent.click(screen.getByRole('button', { name: /criar jogo/i }));
-    expect(useGameStore.getState().gamePhase).toBe('playing');
+    expect(screen.getByRole('button', { name: /jogar local/i })).toBeInTheDocument();
   });
 
   it('renders title', () => {

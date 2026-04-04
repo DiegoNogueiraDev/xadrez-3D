@@ -14,9 +14,6 @@ interface ChessPieceProps {
   position: [number, number, number];
   square: string;
   isSelected?: boolean;
-  onClick?: () => void;
-  onPointerOver?: () => void;
-  onPointerOut?: () => void;
 }
 
 const PIECE_HEIGHTS: Record<PieceSymbol, number> = {
@@ -102,9 +99,6 @@ export default function ChessPiece({
   position,
   square,
   isSelected = false,
-  onClick,
-  onPointerOver,
-  onPointerOut,
 }: ChessPieceProps) {
   const groupRef = useRef<THREE.Group>(null);
   const { scale } = useSelectionAnimation(isSelected);
@@ -116,10 +110,8 @@ export default function ChessPiece({
       ref={groupRef}
       position={position}
       scale={scale}
-      onClick={onClick}
-      onPointerOver={onPointerOver}
-      onPointerOut={onPointerOut}
       name={`piece-${pieceName}`}
+      raycast={() => {}}
     >
       <PieceErrorBoundary fallback={procedural} pieceName={pieceName}>
         <Suspense fallback={procedural}>

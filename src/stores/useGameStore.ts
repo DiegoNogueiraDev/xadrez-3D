@@ -2,8 +2,9 @@ import { create } from 'zustand';
 import { Chess, type Square, type PieceSymbol, type Color } from 'chess.js';
 import { soundManager } from '../lib/sounds';
 import { getMoveSound } from '../lib/moveSound';
+import { networkManager } from '../network/NetworkManager';
 
-export type GamePhase = 'lobby' | 'loading' | 'playing' | 'ended';
+export type GamePhase = 'lobby' | 'loading' | 'waiting' | 'playing' | 'ended';
 
 export interface CapturedPiece {
   type: PieceSymbol;
@@ -30,13 +31,16 @@ interface GameState {
   isCheckmate: boolean;
   isStalemate: boolean;
   playerColor: Color;
+  isOnline: boolean;
 
   // Actions
   selectSquare: (square: string) => void;
   makeMove: (from: string, to: string, promotion?: PieceSymbol) => boolean;
+  applyRemoteMove: (from: string, to: string, promotion?: PieceSymbol) => boolean;
   resetGame: () => void;
   setGamePhase: (phase: GamePhase) => void;
   setPlayerColor: (color: Color) => void;
+  setIsOnline: (online: boolean) => void;
 }
 
 function chessBoardToArray(chess: Chess): (BoardPiece | null)[][] {
@@ -62,6 +66,51 @@ function createInitialState() {
     isCheckmate: false,
     isStalemate: false,
     playerColor: 'w' as Color,
+    isOnline: false,
+  };
+}
+
+function applyMoveToState(
+  chess: Chess,
+  from: string,
+  to: string,
+  capturedPieces: { w: CapturedPiece[]; b: CapturedPiece[] },
+  moveHistory: string[],
+  gamePhase: GamePhase,
+  promotion?: PieceSymbol,
+) {
+  const move = chess.move({
+    from: from as Square,
+    to: to as Square,
+    promotion: promotion || 'q',
+  });
+
+  if (!move) return null;
+
+  const newCaptured = { ...capturedPieces };
+  if (move.captured) {
+    const capturedByColor = move.color;
+    newCaptured[capturedByColor] = [
+      ...newCaptured[capturedByColor],
+      { type: move.captured, color: move.color === 'w' ? 'b' : 'w' },
+    ];
+  }
+
+  const isCheck = chess.isCheck();
+
+  return {
+    board: chessBoardToArray(chess),
+    turn: chess.turn(),
+    selectedSquare: null as Square | null,
+    legalMoves: [] as string[],
+    capturedPieces: newCaptured,
+    moveHistory: [...moveHistory, move.san],
+    isCheck,
+    isCheckmate: chess.isCheckmate(),
+    isStalemate: chess.isStalemate(),
+    gamePhase: chess.isGameOver() ? ('ended' as GamePhase) : gamePhase,
+    _move: move,
+    _isCheck: isCheck,
   };
 }
 
@@ -69,8 +118,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   ...createInitialState(),
 
   selectSquare: (square: string) => {
-    const { chess, selectedSquare, gamePhase } = get();
+    const { chess, selectedSquare, gamePhase, isOnline, playerColor } = get();
     if (gamePhase !== 'playing') return;
+
+    // In online mode, only allow selecting/moving your own pieces
+    if (isOnline && chess.turn() !== playerColor) return;
 
     const sq = square as Square;
 
@@ -98,53 +150,50 @@ export const useGameStore = create<GameState>((set, get) => ({
         legalMoves: moves.map((m) => m.to),
       });
     } else if (!selectedSquare) {
-      // Clicking empty square with no selection — do nothing
       return;
     } else {
-      // Clicking non-valid target — deselect
       set({ selectedSquare: null, legalMoves: [] });
     }
   },
 
   makeMove: (from: string, to: string, promotion?: PieceSymbol) => {
-    const { chess, capturedPieces } = get();
+    const { chess, capturedPieces, moveHistory, gamePhase, isOnline } = get();
 
     try {
-      const move = chess.move({
-        from: from as Square,
-        to: to as Square,
-        promotion: promotion || 'q',
-      });
+      const result = applyMoveToState(chess, from, to, capturedPieces, moveHistory, gamePhase, promotion);
+      if (!result) return false;
 
-      if (!move) return false;
+      const { _move: move, _isCheck: isCheck, ...stateUpdate } = result;
+      set(stateUpdate);
 
-      // Track captured piece
-      const newCaptured = { ...capturedPieces };
-      if (move.captured) {
-        // The capturing color gets the opponent's piece
-        const capturedByColor = move.color;
-        newCaptured[capturedByColor] = [
-          ...newCaptured[capturedByColor],
-          { type: move.captured, color: move.color === 'w' ? 'b' : 'w' },
-        ];
+      // Play sound
+      const soundId = getMoveSound(move, isCheck);
+      soundManager.play(soundId);
+
+      // Send over network if online
+      if (isOnline) {
+        networkManager.send({
+          type: 'move',
+          data: { from, to, promotion },
+        });
       }
 
-      const isCheck = chess.isCheck();
+      return true;
+    } catch {
+      return false;
+    }
+  },
 
-      set({
-        board: chessBoardToArray(chess),
-        turn: chess.turn(),
-        selectedSquare: null,
-        legalMoves: [],
-        capturedPieces: newCaptured,
-        moveHistory: [...get().moveHistory, move.san],
-        isCheck,
-        isCheckmate: chess.isCheckmate(),
-        isStalemate: chess.isStalemate(),
-        gamePhase: chess.isGameOver() ? 'ended' : get().gamePhase,
-      });
+  applyRemoteMove: (from: string, to: string, promotion?: PieceSymbol) => {
+    const { chess, capturedPieces, moveHistory, gamePhase } = get();
 
-      // Play sound for this move
+    try {
+      const result = applyMoveToState(chess, from, to, capturedPieces, moveHistory, gamePhase, promotion);
+      if (!result) return false;
+
+      const { _move: move, _isCheck: isCheck, ...stateUpdate } = result;
+      set(stateUpdate);
+
       const soundId = getMoveSound(move, isCheck);
       soundManager.play(soundId);
 
@@ -164,5 +213,9 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setPlayerColor: (color: Color) => {
     set({ playerColor: color });
+  },
+
+  setIsOnline: (online: boolean) => {
+    set({ isOnline: online });
   },
 }));

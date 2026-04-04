@@ -5,14 +5,15 @@ import SettingsPanel from './components/SettingsPanel';
 import GameHUD from './components/GameHUD';
 import MoveHistory from './components/MoveHistory';
 import CapturedPieces from './components/CapturedPieces';
+import ChatPanel from './components/ChatPanel';
 import { useGameStore } from './stores/useGameStore';
 import { soundManager } from './lib/sounds';
 import { useAudioResume } from './hooks/useAudioResume';
 import { useAudioSync } from './hooks/useAudioSync';
+import { useNetwork } from './hooks/useNetwork';
 
 export default function App() {
   const gamePhase = useGameStore((s) => s.gamePhase);
-  const setGamePhase = useGameStore((s) => s.setGamePhase);
 
   useEffect(() => {
     soundManager.init();
@@ -21,13 +22,11 @@ export default function App() {
   useAudioResume();
   useAudioSync();
 
-  const handleCreateGame = () => {
-    setGamePhase('playing');
-  };
+  const { createGame, joinGame, startLocalGame, connectionStatus, gameId } =
+    useNetwork();
 
-  const handleJoinGame = (_gameId: string) => {
-    setGamePhase('playing');
-  };
+  const showGame = gamePhase === 'playing' || gamePhase === 'ended';
+  const showLobby = gamePhase === 'lobby' || gamePhase === 'waiting';
 
   return (
     <div data-testid="chess-app" className="relative min-h-screen bg-[#0A0A0F] text-white">
@@ -35,11 +34,17 @@ export default function App() {
         Xadrez 3D
       </h1>
 
-      {gamePhase === 'lobby' && (
-        <Lobby onCreateGame={handleCreateGame} onJoinGame={handleJoinGame} />
+      {showLobby && (
+        <Lobby
+          onCreateGame={createGame}
+          onJoinGame={joinGame}
+          onLocalGame={startLocalGame}
+          createdGameId={gameId}
+          connectionStatus={connectionStatus}
+        />
       )}
 
-      {gamePhase !== 'lobby' && (
+      {showGame && (
         <>
           <div className="absolute inset-0">
             <ChessScene />
@@ -47,6 +52,9 @@ export default function App() {
           <GameHUD />
           <div className="absolute top-16 right-4 z-10 pointer-events-auto">
             <SettingsPanel />
+          </div>
+          <div className="absolute left-4 bottom-28 z-10 pointer-events-auto">
+            <ChatPanel />
           </div>
           <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
             <MoveHistory />

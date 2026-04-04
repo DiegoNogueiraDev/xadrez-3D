@@ -79,17 +79,13 @@ describe('ChessPiece', () => {
     expect(piece).toBeInTheDocument();
   });
 
-  it('preserves onClick and pointer event props', () => {
-    const onClick = vi.fn();
-    const onPointerOver = vi.fn();
+  it('renders piece without click handlers (interaction via BoardSquare)', () => {
     const { container } = render(
       <ChessPiece
         type="p"
         color="w"
         position={[0, 0, 0]}
         square="e2"
-        onClick={onClick}
-        onPointerOver={onPointerOver}
       />,
     );
     const piece = container.querySelector('[name="piece-p-w-e2"]');

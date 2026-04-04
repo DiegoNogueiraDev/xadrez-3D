@@ -5,7 +5,7 @@ import { PieceColor } from '../utils/constants';
 type MessageHandler = (msg: GameMessage) => void;
 
 export interface GameMessage {
-  type: 'move' | 'resign' | 'offer-draw' | 'accept-draw' | 'sync' | 'ready';
+  type: 'move' | 'resign' | 'offer-draw' | 'accept-draw' | 'sync' | 'ready' | 'chat';
   data?: any;
 }
 
@@ -120,6 +120,10 @@ export class NetworkManager {
     this.messageHandlers.push(handler);
   }
 
+  offMessage(handler: MessageHandler): void {
+    this.messageHandlers = this.messageHandlers.filter((h) => h !== handler);
+  }
+
   disconnect(): void {
     if (this.connection) {
       this.connection.close();
@@ -135,3 +139,5 @@ export class NetworkManager {
     console.log('[Network] Disconnected');
   }
 }
+
+export const networkManager = new NetworkManager();
