@@ -13,6 +13,10 @@ vi.mock('@react-three/drei', () => ({
   PerspectiveCamera: () => null,
   Text: ({ children }: any) => children,
   Environment: () => null,
+  useGLTF: Object.assign(
+    () => ({ scene: { clone: () => ({}) }, animations: [] }),
+    { preload: () => {} }
+  ),
 }));
 
 describe('App', () => {

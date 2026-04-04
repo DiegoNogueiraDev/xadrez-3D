@@ -31,6 +31,10 @@ vi.mock('@react-three/drei', () => ({
   Environment: (props: any) => (
     <div data-testid="drei-environment" data-files={props.files} />
   ),
+  useGLTF: Object.assign(
+    () => ({ scene: { clone: () => ({}) }, animations: [] }),
+    { preload: () => {} }
+  ),
 }));
 
 describe('ChessScene', () => {

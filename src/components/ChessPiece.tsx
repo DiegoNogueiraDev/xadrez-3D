@@ -1,4 +1,4 @@
-import { useRef, useMemo, Component, type ReactNode } from 'react';
+import { useRef, Component, type ReactNode } from 'react';
 import * as THREE from 'three';
 import { COLORS, PIECE_SCALE } from '../utils/constants';
 import type { PieceSymbol, Color } from 'chess.js';
