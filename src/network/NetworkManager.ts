@@ -5,7 +5,7 @@ import { PieceColor } from '../utils/constants';
 type MessageHandler = (msg: GameMessage) => void;
 
 export interface GameMessage {
-  type: 'move' | 'resign' | 'offer-draw' | 'accept-draw' | 'sync' | 'ready' | 'chat' | 'player-info' | 'spectator-count';
+  type: 'move' | 'resign' | 'offer-draw' | 'accept-draw' | 'sync' | 'ready' | 'chat' | 'player-info' | 'spectator-count' | 'reaction';
   data?: any;
 }
 
@@ -150,7 +150,7 @@ export class NetworkManager {
       console.log('[Network] Received:', msg.type);
 
       // Host: relay moves and chat to spectators
-      if (this.isHost && (msg.type === 'move' || msg.type === 'chat')) {
+      if (this.isHost && (msg.type === 'move' || msg.type === 'chat' || msg.type === 'reaction')) {
         this.broadcastToSpectators(msg);
       }
 
@@ -179,6 +179,26 @@ export class NetworkManager {
     // Broadcast updated count to all
     this.broadcast({ type: 'spectator-count', data: { count } });
 
+    // Listen for spectator messages (reactions)
+    conn.on('data', (data: unknown) => {
+      const msg = data as GameMessage;
+      if (msg.type === 'reaction') {
+        // Relay reaction to player and all other spectators
+        if (this.playerConnection && this.playerConnection.open) {
+          this.playerConnection.send(msg);
+        }
+        for (const sc of this.spectatorConnections) {
+          if (sc !== conn && sc.open) {
+            sc.send(msg);
+          }
+        }
+        // Also notify host's own handlers
+        for (const handler of this.messageHandlers) {
+          handler(msg);
+        }
+      }
+    });
+
     conn.on('close', () => {
       this.spectatorConnections = this.spectatorConnections.filter((c) => c !== conn);
       const newCount = this.spectatorConnections.length;
@@ -198,7 +218,7 @@ export class NetworkManager {
       this.playerConnection.send(msg);
 
       // Host: also relay to spectators for moves/chat
-      if (this.isHost && (msg.type === 'move' || msg.type === 'chat')) {
+      if (this.isHost && (msg.type === 'move' || msg.type === 'chat' || msg.type === 'reaction')) {
         this.broadcastToSpectators(msg);
       }
     } else {

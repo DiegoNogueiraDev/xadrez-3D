@@ -3,6 +3,7 @@ import { networkManager, type GameMessage } from '../network/NetworkManager';
 import { useNetworkStore } from '../stores/useNetworkStore';
 import { useGameStore } from '../stores/useGameStore';
 import { useChatStore } from '../stores/useChatStore';
+import { useReactionStore } from '../stores/useReactionStore';
 
 export function useNetwork() {
   const setConnectionStatus = useNetworkStore((s) => s.setConnectionStatus);
@@ -44,6 +45,11 @@ export function useNetwork() {
         }
         case 'spectator-count': {
           useNetworkStore.getState().setSpectatorCount(msg.data.count);
+          break;
+        }
+        case 'reaction': {
+          const { emoji, sender } = msg.data;
+          useReactionStore.getState().addReaction(emoji, sender);
           break;
         }
       }

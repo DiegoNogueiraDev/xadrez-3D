@@ -34,6 +34,7 @@ export const CAMERA = {
   far: 100,
   whitePosition: { x: 0, y: 8, z: 7 } as const,
   blackPosition: { x: 0, y: 8, z: -7 } as const,
+  spectatorPosition: { x: 0, y: 12, z: 0 } as const,
   lookAt: { x: 0, y: 0, z: 0 } as const,
 };
 

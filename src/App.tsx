@@ -6,6 +6,8 @@ import GameHUD from './components/GameHUD';
 import MoveHistory from './components/MoveHistory';
 import CapturedPieces from './components/CapturedPieces';
 import ChatPanel from './components/ChatPanel';
+import ReactionPicker from './components/ReactionPicker';
+import ReactionOverlay from './components/ReactionOverlay';
 import { useGameStore } from './stores/useGameStore';
 import { soundManager } from './lib/sounds';
 import { useAudioResume } from './hooks/useAudioResume';
@@ -54,8 +56,12 @@ export default function App() {
           <div className="absolute top-16 right-4 z-10 pointer-events-auto">
             <SettingsPanel />
           </div>
+          <ReactionOverlay />
           <div className="absolute left-4 bottom-28 z-10 pointer-events-auto">
             <ChatPanel />
+            <div className="mt-2">
+              <ReactionPicker />
+            </div>
           </div>
           <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
             <MoveHistory />

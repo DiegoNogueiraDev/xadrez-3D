@@ -7,10 +7,14 @@ import { getModelPath, MODEL_MANIFEST } from '../lib/modelManifest';
 function normalizeScene(scene: THREE.Group): THREE.Group {
   const clone = scene.clone();
 
-  // Fix nodes with zero scale (common in AI-generated GLTF models)
   clone.traverse((node) => {
+    // Fix nodes with zero scale (common in AI-generated GLTF models)
     if (node.scale.x === 0 || node.scale.y === 0 || node.scale.z === 0) {
       node.scale.set(1, 1, 1);
+    }
+    // Disable raycasting on all meshes so pieces don't intercept board square clicks
+    if ((node as THREE.Mesh).isMesh) {
+      node.raycast = () => {};
     }
   });
 

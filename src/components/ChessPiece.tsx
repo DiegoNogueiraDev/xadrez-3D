@@ -31,7 +31,7 @@ function ProceduralPiece({ type, color }: { type: PieceSymbol; color: Color }) {
 
   return (
     <group scale={[PIECE_SCALE, PIECE_SCALE, PIECE_SCALE]}>
-      <mesh position={[0, 0.075, 0]} castShadow>
+      <mesh position={[0, 0.075, 0]} castShadow raycast={() => {}}>
         <cylinderGeometry args={[0.35, 0.4, 0.15, 16]} />
         <meshPhysicalMaterial
           color={mat.color}
@@ -41,7 +41,7 @@ function ProceduralPiece({ type, color }: { type: PieceSymbol; color: Color }) {
           clearcoatRoughness={mat.clearcoatRoughness}
         />
       </mesh>
-      <mesh position={[0, height / 2 + 0.15, 0]} castShadow>
+      <mesh position={[0, height / 2 + 0.15, 0]} castShadow raycast={() => {}}>
         <cylinderGeometry args={[0.15, 0.25, height, 16]} />
         <meshPhysicalMaterial
           color={mat.color}
@@ -51,7 +51,7 @@ function ProceduralPiece({ type, color }: { type: PieceSymbol; color: Color }) {
           clearcoatRoughness={mat.clearcoatRoughness}
         />
       </mesh>
-      <mesh position={[0, height + 0.2, 0]} castShadow>
+      <mesh position={[0, height + 0.2, 0]} castShadow raycast={() => {}}>
         <sphereGeometry args={[0.15, 16, 16]} />
         <meshPhysicalMaterial
           color={mat.color}
