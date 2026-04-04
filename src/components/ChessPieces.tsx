@@ -1,6 +1,36 @@
 import { SQUARE_SIZE, BOARD_OFFSET, PIECE_HEIGHT_OFFSET } from '../utils/constants';
 import { useGameStore } from '../stores/useGameStore';
 import ChessPiece from './ChessPiece';
+import { useSquareInteraction } from '../hooks/useSquareInteraction';
+import type { PieceSymbol, Color } from 'chess.js';
+
+function InteractivePiece({
+  type,
+  color,
+  position,
+  square,
+}: {
+  type: PieceSymbol;
+  color: Color;
+  position: [number, number, number];
+  square: string;
+}) {
+  const { onClick, onPointerOver, onPointerOut, isSelected } =
+    useSquareInteraction(square);
+
+  return (
+    <ChessPiece
+      type={type}
+      color={color}
+      position={position}
+      square={square}
+      isSelected={isSelected}
+      onClick={onClick}
+      onPointerOver={onPointerOver}
+      onPointerOut={onPointerOut}
+    />
+  );
+}
 
 function squareToPosition(square: string): [number, number, number] {
   const file = square.charCodeAt(0) - 'a'.charCodeAt(0);
@@ -12,7 +42,6 @@ function squareToPosition(square: string): [number, number, number] {
 
 export default function ChessPieces() {
   const board = useGameStore((s) => s.board);
-  const selectedSquare = useGameStore((s) => s.selectedSquare);
 
   const pieces: JSX.Element[] = [];
 
@@ -25,13 +54,12 @@ export default function ChessPieces() {
       const pos = squareToPosition(square);
 
       pieces.push(
-        <ChessPiece
+        <InteractivePiece
           key={square}
           type={piece.type}
           color={piece.color}
           position={pos}
           square={square}
-          isSelected={selectedSquare === square}
         />,
       );
     }

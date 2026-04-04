@@ -12,6 +12,7 @@ vi.mock('@react-three/drei', () => ({
   OrbitControls: () => null,
   PerspectiveCamera: () => null,
   Text: ({ children }: any) => children,
+  Environment: () => null,
 }));
 
 describe('App', () => {

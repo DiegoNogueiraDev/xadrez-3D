@@ -1,4 +1,5 @@
 import { Howl, Howler } from 'howler';
+import { SOUND_MANIFEST } from './soundAssets';
 
 export type SoundId =
   | 'move'
@@ -11,18 +12,6 @@ export type SoundId =
   | 'game_over'
   | 'piece_pickup';
 
-const SOUND_PATHS: Record<SoundId, string> = {
-  move: '/sounds/move.mp3',
-  capture: '/sounds/capture.mp3',
-  check: '/sounds/check.mp3',
-  castle: '/sounds/castle.mp3',
-  promote: '/sounds/promote.mp3',
-  ambient: '/sounds/ambient.mp3',
-  game_start: '/sounds/game_start.mp3',
-  game_over: '/sounds/game_over.mp3',
-  piece_pickup: '/sounds/piece_pickup.mp3',
-};
-
 export interface PlayOptions {
   volume?: number;
   rate?: number;
@@ -33,9 +22,9 @@ export class SoundManager {
   private _muted = false;
 
   init(): void {
-    for (const [id, path] of Object.entries(SOUND_PATHS)) {
+    for (const [id, asset] of Object.entries(SOUND_MANIFEST)) {
       const howl = new Howl({
-        src: [path],
+        src: [asset.path],
         preload: true,
         loop: id === 'ambient',
       });

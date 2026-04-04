@@ -28,6 +28,9 @@ vi.mock('@react-three/drei', () => ({
       {children}
     </div>
   ),
+  Environment: (props: any) => (
+    <div data-testid="drei-environment" data-files={props.files} />
+  ),
 }));
 
 describe('ChessScene', () => {
