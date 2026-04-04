@@ -3,13 +3,16 @@ import { LIGHTING_CONFIG, getLightingForQuality } from './lightingConfig';
 
 describe('LIGHTING_CONFIG', () => {
   describe('key light', () => {
-    it('has position [5,10,5]', () => {
-      expect(LIGHTING_CONFIG.key.position).toEqual([5, 10, 5]);
+    it('has position [4,8,3]', () => {
+      expect(LIGHTING_CONFIG.key.position).toEqual([4, 8, 3]);
     });
 
-    it('has intensity between 1.5 and 2.5', () => {
-      expect(LIGHTING_CONFIG.key.intensity).toBeGreaterThanOrEqual(1.5);
-      expect(LIGHTING_CONFIG.key.intensity).toBeLessThanOrEqual(2.5);
+    it('has warm golden color for medieval atmosphere', () => {
+      expect(LIGHTING_CONFIG.key.color).toBe('#FFD49E');
+    });
+
+    it('has intensity 0.8 for dimm medieval lighting', () => {
+      expect(LIGHTING_CONFIG.key.intensity).toBe(0.8);
     });
 
     it('casts shadows with mapSize 2048', () => {
@@ -19,13 +22,12 @@ describe('LIGHTING_CONFIG', () => {
   });
 
   describe('fill light', () => {
-    it('has position [-5,5,-5]', () => {
-      expect(LIGHTING_CONFIG.fill.position).toEqual([-5, 5, -5]);
+    it('has position [-4,4,-4]', () => {
+      expect(LIGHTING_CONFIG.fill.position).toEqual([-4, 4, -4]);
     });
 
-    it('has intensity between 0.3 and 0.7', () => {
-      expect(LIGHTING_CONFIG.fill.intensity).toBeGreaterThanOrEqual(0.3);
-      expect(LIGHTING_CONFIG.fill.intensity).toBeLessThanOrEqual(0.7);
+    it('has low intensity for subtle fill', () => {
+      expect(LIGHTING_CONFIG.fill.intensity).toBe(0.2);
     });
 
     it('does not cast shadows', () => {
@@ -34,13 +36,12 @@ describe('LIGHTING_CONFIG', () => {
   });
 
   describe('rim light', () => {
-    it('has position [0,8,-8]', () => {
-      expect(LIGHTING_CONFIG.rim.position).toEqual([0, 8, -8]);
+    it('has position [0,6,-6]', () => {
+      expect(LIGHTING_CONFIG.rim.position).toEqual([0, 6, -6]);
     });
 
-    it('has intensity between 0.5 and 1.0', () => {
-      expect(LIGHTING_CONFIG.rim.intensity).toBeGreaterThanOrEqual(0.5);
-      expect(LIGHTING_CONFIG.rim.intensity).toBeLessThanOrEqual(1.0);
+    it('has intensity 0.3 for subtle rim', () => {
+      expect(LIGHTING_CONFIG.rim.intensity).toBe(0.3);
     });
 
     it('does not cast shadows', () => {
@@ -49,9 +50,8 @@ describe('LIGHTING_CONFIG', () => {
   });
 
   describe('ambient light', () => {
-    it('has intensity between 0.2 and 0.4', () => {
-      expect(LIGHTING_CONFIG.ambient.intensity).toBeGreaterThanOrEqual(0.2);
-      expect(LIGHTING_CONFIG.ambient.intensity).toBeLessThanOrEqual(0.4);
+    it('has low intensity 0.15 for medieval atmosphere', () => {
+      expect(LIGHTING_CONFIG.ambient.intensity).toBe(0.15);
     });
   });
 });

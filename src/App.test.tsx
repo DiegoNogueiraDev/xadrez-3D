@@ -15,7 +15,7 @@ vi.mock('@react-three/drei', () => ({
   Environment: () => null,
   ContactShadows: () => null,
   useGLTF: Object.assign(
-    () => ({ scene: { clone: () => ({}) }, animations: [] }),
+    () => ({ scene: { clone: () => ({ traverse: () => {} }) }, animations: [] }),
     { preload: () => {} }
   ),
 }));

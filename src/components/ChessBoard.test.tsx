@@ -19,6 +19,17 @@ vi.mock('@react-three/drei', () => ({
       {children}
     </div>
   ),
+  useGLTF: Object.assign(
+    () => ({
+      scene: {
+        clone: () => ({
+          traverse: () => {},
+        }),
+      },
+      animations: [],
+    }),
+    { preload: () => {} }
+  ),
 }));
 
 describe('ChessBoard', () => {

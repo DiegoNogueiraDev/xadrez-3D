@@ -9,6 +9,7 @@ export default function TableSurface() {
       rotation={[-Math.PI / 2, 0, 0]}
       receiveShadow
       name="table-surface"
+      raycast={() => {}}
     >
       <planeGeometry args={[size, size]} />
       <meshStandardMaterial color={color} roughness={roughness} metalness={metalness} />

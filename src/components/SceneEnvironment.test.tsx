@@ -45,15 +45,15 @@ describe('SceneEnvironment', () => {
     expect(env.getAttribute('data-files')).toBe(ENVIRONMENT_CONFIG.path);
   });
 
-  it('sets background={false} for reflections only', () => {
+  it('sets background={true} for medieval atmosphere', () => {
     const { getByTestId } = render(<SceneEnvironment />);
     const env = getByTestId('drei-environment');
-    expect(env.getAttribute('data-background')).toBe('false');
+    expect(env.getAttribute('data-background')).toBe('true');
   });
 
-  it('uses the correct HDRI path from config', () => {
+  it('uses the correct medieval HDRI path from config', () => {
     const { getByTestId } = render(<SceneEnvironment />);
     const env = getByTestId('drei-environment');
-    expect(env.getAttribute('data-files')).toBe('/assets/environment/studio.hdr');
+    expect(env.getAttribute('data-files')).toBe('/assets/environment/medieval.hdr');
   });
 });

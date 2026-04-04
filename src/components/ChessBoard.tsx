@@ -12,6 +12,8 @@ function GLTFBoard() {
       if (node.scale.x === 0 || node.scale.y === 0 || node.scale.z === 0) {
         node.scale.set(1, 1, 1);
       }
+      // Disable raycast on board model so clicks pass through to interaction squares
+      node.raycast = () => {};
     });
     return c;
   }, [scene]);

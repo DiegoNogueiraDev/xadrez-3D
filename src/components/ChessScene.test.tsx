@@ -32,7 +32,7 @@ vi.mock('@react-three/drei', () => ({
   ),
   ContactShadows: () => <div data-testid="contact-shadows" />,
   useGLTF: Object.assign(
-    () => ({ scene: { clone: () => ({}) }, animations: [] }),
+    () => ({ scene: { clone: () => ({ traverse: () => {} }) }, animations: [] }),
     { preload: () => {} }
   ),
 }));

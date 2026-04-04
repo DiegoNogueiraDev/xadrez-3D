@@ -9,20 +9,20 @@ describe('ENVIRONMENT_CONFIG', () => {
     expect(ENVIRONMENT_CONFIG).toHaveProperty('label');
   });
 
-  it('path === /assets/environment/studio.hdr', () => {
-    expect(ENVIRONMENT_CONFIG.path).toBe('/assets/environment/studio.hdr');
+  it('path === /assets/environment/medieval.hdr', () => {
+    expect(ENVIRONMENT_CONFIG.path).toBe('/assets/environment/medieval.hdr');
   });
 
   it('resolution === 1k for web performance', () => {
     expect(ENVIRONMENT_CONFIG.resolution).toBe('1k');
   });
 
-  it('sourceId matches the Polyhaven brown_photostudio_02 asset', () => {
-    expect(ENVIRONMENT_CONFIG.sourceId).toBe('brown_photostudio_02');
+  it('sourceId matches the Polyhaven abandoned_hall_01 asset', () => {
+    expect(ENVIRONMENT_CONFIG.sourceId).toBe('abandoned_hall_01');
   });
 
   it('label describes the HDRI environment', () => {
-    expect(ENVIRONMENT_CONFIG.label).toBe('Brown Photo Studio');
+    expect(ENVIRONMENT_CONFIG.label).toBe('Medieval Hall');
   });
 
   it('path ends with .hdr extension for HDR format', () => {

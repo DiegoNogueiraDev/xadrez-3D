@@ -1,9 +1,0 @@
-- generic [ref=e3]:
-  - heading "Xadrez 3D" [level=1]
-  - generic [ref=e5]:
-    - heading "Xadrez 3D" [level=2] [ref=e6]
-    - generic [ref=e7]:
-      - button "Criar Jogo" [ref=e8]
-      - generic [ref=e11]: ou
-      - textbox "Game ID" [ref=e13]
-      - button "Entrar" [disabled] [ref=e14]
