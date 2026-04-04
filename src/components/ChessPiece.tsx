@@ -1,7 +1,8 @@
-import { useRef } from 'react';
+import { useRef, useMemo, Component, type ReactNode } from 'react';
 import * as THREE from 'three';
 import { COLORS, PIECE_SCALE } from '../utils/constants';
 import type { PieceSymbol, Color } from 'chess.js';
+import { usePieceModel } from '../hooks/usePieceModel';
 
 interface ChessPieceProps {
   type: PieceSymbol;
@@ -13,21 +14,6 @@ interface ChessPieceProps {
   onPointerOver?: () => void;
   onPointerOut?: () => void;
 }
-
-const PIECE_GLB_MAP: Record<string, string> = {
-  'p-w': '/assets/models/pawn_white.glb',
-  'r-w': '/assets/models/rook_white.glb',
-  'n-w': '/assets/models/knight_white.glb',
-  'b-w': '/assets/models/bishop_white.glb',
-  'q-w': '/assets/models/queen_white.glb',
-  'k-w': '/assets/models/king_white.glb',
-  'p-b': '/assets/models/pawn_black.glb',
-  'r-b': '/assets/models/rook_black.glb',
-  'n-b': '/assets/models/knight_black.glb',
-  'b-b': '/assets/models/bishop_black.glb',
-  'q-b': '/assets/models/queen_black.glb',
-  'k-b': '/assets/models/king_black.glb',
-};
 
 // Height scales for procedural fallback per piece type
 const PIECE_HEIGHTS: Record<PieceSymbol, number> = {
@@ -64,6 +50,26 @@ function ProceduralPiece({ type, color }: { type: PieceSymbol; color: Color }) {
   );
 }
 
+function GLTFPiece({ type, color }: { type: PieceSymbol; color: Color }) {
+  const { scene } = usePieceModel(type, color);
+  return <primitive object={scene} />;
+}
+
+// Error boundary for GLTF loading fallback (C-002 constraint)
+class PieceErrorBoundary extends Component<
+  { fallback: ReactNode; children: ReactNode },
+  { hasError: boolean }
+> {
+  state = { hasError: false };
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) return this.props.fallback;
+    return this.props.children;
+  }
+}
+
 export default function ChessPiece({
   type,
   color,
@@ -75,6 +81,7 @@ export default function ChessPiece({
   onPointerOut,
 }: ChessPieceProps) {
   const groupRef = useRef<THREE.Group>(null);
+  const procedural = <ProceduralPiece type={type} color={color} />;
 
   return (
     <group
@@ -88,7 +95,9 @@ export default function ChessPiece({
       data-color={color}
       data-square={square}
     >
-      <ProceduralPiece type={type} color={color} />
+      <PieceErrorBoundary fallback={procedural}>
+        <GLTFPiece type={type} color={color} />
+      </PieceErrorBoundary>
       {isSelected && (
         <pointLight position={[0, 1, 0]} intensity={0.5} color="#ffff00" distance={2} />
       )}
