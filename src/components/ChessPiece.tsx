@@ -1,11 +1,12 @@
-import { useRef, Component, type ReactNode } from 'react';
+import { useRef, Suspense, Component, type ReactNode } from 'react';
 import * as THREE from 'three';
 import { animated } from '@react-spring/three';
-import { COLORS, PIECE_SCALE } from '../utils/constants';
+import { PIECE_SCALE } from '../utils/constants';
 import type { PieceSymbol, Color } from 'chess.js';
 import { usePieceModel } from '../hooks/usePieceModel';
 import { useSelectionAnimation } from '../hooks/useSelectionAnimation';
 import { SELECTION_CONFIG } from '../lib/selectionConfig';
+import { getPieceMaterial } from '../lib/pieceMaterials';
 
 interface ChessPieceProps {
   type: PieceSymbol;
@@ -18,7 +19,6 @@ interface ChessPieceProps {
   onPointerOut?: () => void;
 }
 
-// Height scales for procedural fallback per piece type
 const PIECE_HEIGHTS: Record<PieceSymbol, number> = {
   p: 0.6,
   r: 0.7,
@@ -29,43 +29,66 @@ const PIECE_HEIGHTS: Record<PieceSymbol, number> = {
 };
 
 function ProceduralPiece({ type, color }: { type: PieceSymbol; color: Color }) {
-  const pieceColor = color === 'w' ? COLORS.whitePiece : COLORS.blackPiece;
+  const mat = getPieceMaterial(color);
   const height = PIECE_HEIGHTS[type];
 
   return (
     <group scale={[PIECE_SCALE, PIECE_SCALE, PIECE_SCALE]}>
-      {/* Base */}
       <mesh position={[0, 0.075, 0]} castShadow>
         <cylinderGeometry args={[0.35, 0.4, 0.15, 16]} />
-        <meshStandardMaterial color={pieceColor} roughness={0.4} metalness={0.1} />
+        <meshPhysicalMaterial
+          color={mat.color}
+          roughness={mat.roughness}
+          metalness={mat.metalness}
+          clearcoat={mat.clearcoat}
+          clearcoatRoughness={mat.clearcoatRoughness}
+        />
       </mesh>
-      {/* Body */}
       <mesh position={[0, height / 2 + 0.15, 0]} castShadow>
         <cylinderGeometry args={[0.15, 0.25, height, 16]} />
-        <meshStandardMaterial color={pieceColor} roughness={0.4} metalness={0.1} />
+        <meshPhysicalMaterial
+          color={mat.color}
+          roughness={mat.roughness}
+          metalness={mat.metalness}
+          clearcoat={mat.clearcoat}
+          clearcoatRoughness={mat.clearcoatRoughness}
+        />
       </mesh>
-      {/* Top sphere */}
       <mesh position={[0, height + 0.2, 0]} castShadow>
         <sphereGeometry args={[0.15, 16, 16]} />
-        <meshStandardMaterial color={pieceColor} roughness={0.4} metalness={0.1} />
+        <meshPhysicalMaterial
+          color={mat.color}
+          roughness={mat.roughness}
+          metalness={mat.metalness}
+          clearcoat={mat.clearcoat}
+          clearcoatRoughness={mat.clearcoatRoughness}
+        />
       </mesh>
     </group>
   );
 }
 
+const GLTF_SCALE = 5;
+
 function GLTFPiece({ type, color }: { type: PieceSymbol; color: Color }) {
   const { scene } = usePieceModel(type, color);
-  return <primitive object={scene} />;
+  return (
+    <group scale={[GLTF_SCALE, GLTF_SCALE, GLTF_SCALE]}>
+      <primitive object={scene} />
+    </group>
+  );
 }
 
-// Error boundary for GLTF loading fallback (C-002 constraint)
 class PieceErrorBoundary extends Component<
-  { fallback: ReactNode; children: ReactNode },
+  { fallback: ReactNode; children: ReactNode; pieceName?: string },
   { hasError: boolean }
 > {
   state = { hasError: false };
   static getDerivedStateFromError() {
     return { hasError: true };
+  }
+  componentDidCatch(error: Error) {
+    console.warn(`[ChessPiece] GLTF load failed for ${this.props.pieceName}, using procedural fallback:`, error.message);
   }
   render() {
     if (this.state.hasError) return this.props.fallback;
@@ -84,8 +107,9 @@ export default function ChessPiece({
   onPointerOut,
 }: ChessPieceProps) {
   const groupRef = useRef<THREE.Group>(null);
-  const { scale, emissiveIntensity } = useSelectionAnimation(isSelected);
+  const { scale } = useSelectionAnimation(isSelected);
   const procedural = <ProceduralPiece type={type} color={color} />;
+  const pieceName = `${type}-${color}-${square}`;
 
   return (
     <animated.group
@@ -95,13 +119,12 @@ export default function ChessPiece({
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
-      data-testid="chess-piece"
-      data-type={type}
-      data-color={color}
-      data-square={square}
+      name={`piece-${pieceName}`}
     >
-      <PieceErrorBoundary fallback={procedural}>
-        <GLTFPiece type={type} color={color} />
+      <PieceErrorBoundary fallback={procedural} pieceName={pieceName}>
+        <Suspense fallback={procedural}>
+          <GLTFPiece type={type} color={color} />
+        </Suspense>
       </PieceErrorBoundary>
       {isSelected && (
         <pointLight

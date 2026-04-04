@@ -22,6 +22,7 @@ describe('useSettingsStore', () => {
       shadowsEnabled: true,
       particlesEnabled: true,
       muted: false,
+      theme: 'dark',
     });
   });
 
@@ -101,6 +102,25 @@ describe('useSettingsStore', () => {
   describe('muted initial state', () => {
     it('has muted false by default', () => {
       expect(useSettingsStore.getState().muted).toBe(false);
+    });
+  });
+
+  describe('theme', () => {
+    it('has default theme dark', () => {
+      expect(useSettingsStore.getState().theme).toBe('dark');
+    });
+
+    it('toggleTheme flips between dark and light', () => {
+      useSettingsStore.getState().toggleTheme();
+      expect(useSettingsStore.getState().theme).toBe('light');
+
+      useSettingsStore.getState().toggleTheme();
+      expect(useSettingsStore.getState().theme).toBe('dark');
+    });
+
+    it('toggleTheme persists to localStorage', () => {
+      useSettingsStore.getState().toggleTheme();
+      expect(localStorageMock.setItem).toHaveBeenCalled();
     });
   });
 });

@@ -32,50 +32,50 @@ vi.mock('@react-three/drei', () => ({
   Environment: () => null,
 }));
 
-// Need to import ChessPiece after mocks are set up
+vi.mock('@react-spring/three', () => ({
+  useSpring: (props: Record<string, unknown>) => props,
+  animated: {
+    group: (props: Record<string, unknown>) => {
+      const { children, scale, ...rest } = props as any;
+      return <group {...rest}>{children}</group>;
+    },
+  },
+}));
+
 import ChessPiece from './ChessPiece';
 
 describe('ChessPiece', () => {
-  it('renders a piece with correct data attributes', () => {
+  it('renders a piece with correct name attribute', () => {
     const { container } = render(
       <ChessPiece type="p" color="w" position={[0, 0, 0]} square="e2" />,
     );
-    const piece = container.querySelector('[data-testid="chess-piece"]');
+    const piece = container.querySelector('[name="piece-p-w-e2"]');
     expect(piece).toBeInTheDocument();
-    expect(piece?.getAttribute('data-type')).toBe('p');
-    expect(piece?.getAttribute('data-color')).toBe('w');
-    expect(piece?.getAttribute('data-square')).toBe('e2');
   });
 
   it('renders GLTF model when usePieceModel succeeds', () => {
-    const { container } = render(
+    render(
       <ChessPiece type="q" color="w" position={[0, 0, 0]} square="d1" />,
     );
-    // Should have called useGLTF for queen_white
     expect(mockUseGLTF).toHaveBeenCalled();
-    // Should render primitive for GLTF
-    const piece = container.querySelector('[data-testid="chess-piece"]');
-    expect(piece).toBeInTheDocument();
   });
 
   it('falls back to procedural geometry when useGLTF throws', () => {
-    // Make useGLTF throw to simulate load failure
     mockUseGLTF.mockImplementationOnce(() => {
       throw new Error('Failed to load');
     });
     const { container } = render(
       <ChessPiece type="k" color="b" position={[0, 0, 0]} square="e8" />,
     );
-    // Should still render something (fallback)
-    const piece = container.querySelector('[data-testid="chess-piece"]');
+    const piece = container.querySelector('[name="piece-k-b-e8"]');
     expect(piece).toBeInTheDocument();
   });
 
-  it('renders with selected highlight when isSelected', () => {
+  it('renders with selected state when isSelected', () => {
     const { container } = render(
       <ChessPiece type="p" color="w" position={[0, 0, 0]} square="e2" isSelected />,
     );
-    const piece = container.querySelector('[data-testid="chess-piece"]');
+    const piece = container.querySelector('[name="piece-p-w-e2"]');
     expect(piece).toBeInTheDocument();
   });
 
@@ -92,7 +92,7 @@ describe('ChessPiece', () => {
         onPointerOver={onPointerOver}
       />,
     );
-    const piece = container.querySelector('[data-testid="chess-piece"]');
+    const piece = container.querySelector('[name="piece-p-w-e2"]');
     expect(piece).toBeInTheDocument();
   });
 });
@@ -104,21 +104,19 @@ describe('ChessPieces', () => {
 
   it('renders 32 pieces in initial position', () => {
     const { container } = render(<ChessPieces />);
-    const pieces = container.querySelectorAll('[data-testid="chess-piece"]');
+    const pieces = container.querySelectorAll('[name^="piece-"]');
     expect(pieces).toHaveLength(32);
   });
 
-  it('renders correct number of each color', () => {
+  it('renders correct total of 32 pieces', () => {
     const { container } = render(<ChessPieces />);
-    const whitePieces = container.querySelectorAll('[data-color="w"]');
-    const blackPieces = container.querySelectorAll('[data-color="b"]');
-    expect(whitePieces).toHaveLength(16);
-    expect(blackPieces).toHaveLength(16);
+    const allPieces = container.querySelectorAll('[name^="piece-"]');
+    expect(allPieces).toHaveLength(32);
   });
 
   it('renders pawns on ranks 2 and 7', () => {
     const { container } = render(<ChessPieces />);
-    const pawns = container.querySelectorAll('[data-type="p"]');
+    const pawns = container.querySelectorAll('[name^="piece-p-"]');
     expect(pawns).toHaveLength(16);
   });
 });

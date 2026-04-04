@@ -27,7 +27,7 @@ export default function ChessBoard() {
       <mesh
         position={[0, -0.11, 0]}
         receiveShadow
-        data-testid="board-border"
+        name="board-border"
       >
         <boxGeometry args={[totalWidth, 0.1, totalWidth]} />
         <meshStandardMaterial color={COLORS.boardBorder} roughness={0.6} metalness={0.2} />

@@ -21,9 +21,7 @@ export default function BoardSquare({ file, rank }: BoardSquareProps) {
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
-      data-testid="board-square"
-      data-square={squareName}
-      data-color={isLight ? 'light' : 'dark'}
+      name={`square-${squareName}-${isLight ? 'light' : 'dark'}`}
     >
       <boxGeometry args={[SQUARE_SIZE, 0.1, SQUARE_SIZE]} />
       <meshStandardMaterial color={color} roughness={0.8} metalness={0.1} />

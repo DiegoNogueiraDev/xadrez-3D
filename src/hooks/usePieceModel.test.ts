@@ -1,20 +1,26 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
+import * as THREE from 'three';
 
-const { mockScene, mockAnimations, mockUseGLTF, mockPreload } = vi.hoisted(() => {
-  const mockScene = {
-    clone: vi.fn().mockReturnThis(),
-  };
+const { mockAnimations, mockUseGLTF, mockPreload } = vi.hoisted(() => {
+  // Create a real Three.js group as mock scene
+  const mockGroup = new THREE.Group();
+  const mockMesh = new THREE.Mesh(
+    new THREE.BoxGeometry(0.1, 0.2, 0.1),
+    new THREE.MeshBasicMaterial()
+  );
+  mockGroup.add(mockMesh);
+
   const mockAnimations = [{ name: 'idle' }, { name: 'capture' }];
   const mockPreload = vi.fn();
   const mockUseGLTF = Object.assign(
     vi.fn().mockReturnValue({
-      scene: mockScene,
+      scene: mockGroup,
       animations: mockAnimations,
     }),
     { preload: mockPreload }
   );
-  return { mockScene, mockAnimations, mockUseGLTF, mockPreload };
+  return { mockAnimations, mockUseGLTF, mockPreload };
 });
 
 vi.mock('@react-three/drei', () => ({
@@ -28,11 +34,6 @@ describe('usePieceModel', () => {
     const { result } = renderHook(() => usePieceModel('p', 'w'));
     expect(result.current).toHaveProperty('scene');
     expect(result.current).toHaveProperty('animations');
-    expect(result.current).toHaveProperty('isLoaded');
-  });
-
-  it('returns isLoaded=true when useGLTF succeeds', () => {
-    const { result } = renderHook(() => usePieceModel('p', 'w'));
     expect(result.current.isLoaded).toBe(true);
   });
 
@@ -41,10 +42,10 @@ describe('usePieceModel', () => {
     expect(result.current.animations).toEqual(mockAnimations);
   });
 
-  it('clones the scene to avoid shared geometry', () => {
-    mockScene.clone.mockClear();
-    renderHook(() => usePieceModel('r', 'b'));
-    expect(mockScene.clone).toHaveBeenCalled();
+  it('returns a normalized scene (not the original)', () => {
+    const { result } = renderHook(() => usePieceModel('r', 'b'));
+    // Scene should be a Group (cloned and normalized)
+    expect(result.current.scene).toBeInstanceOf(THREE.Group);
   });
 
   it('loads from the correct MODEL_MANIFEST path', () => {

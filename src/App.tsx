@@ -2,9 +2,13 @@ import { useEffect } from 'react';
 import ChessScene from './components/ChessScene';
 import Lobby from './components/Lobby';
 import SettingsPanel from './components/SettingsPanel';
+import GameHUD from './components/GameHUD';
+import MoveHistory from './components/MoveHistory';
+import CapturedPieces from './components/CapturedPieces';
 import { useGameStore } from './stores/useGameStore';
 import { soundManager } from './lib/sounds';
 import { useAudioResume } from './hooks/useAudioResume';
+import { useAudioSync } from './hooks/useAudioSync';
 
 export default function App() {
   const gamePhase = useGameStore((s) => s.gamePhase);
@@ -15,12 +19,13 @@ export default function App() {
   }, []);
 
   useAudioResume();
+  useAudioSync();
 
   const handleCreateGame = () => {
     setGamePhase('playing');
   };
 
-  const handleJoinGame = (gameId: string) => {
+  const handleJoinGame = (_gameId: string) => {
     setGamePhase('playing');
   };
 
@@ -39,8 +44,15 @@ export default function App() {
           <div className="absolute inset-0">
             <ChessScene />
           </div>
+          <GameHUD />
           <div className="absolute top-16 right-4 z-10 pointer-events-auto">
             <SettingsPanel />
+          </div>
+          <div className="absolute bottom-4 right-4 z-10 pointer-events-auto">
+            <MoveHistory />
+          </div>
+          <div className="absolute bottom-4 left-4 z-10 pointer-events-auto">
+            <CapturedPieces />
           </div>
         </>
       )}

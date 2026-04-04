@@ -3,6 +3,11 @@ import { OrbitControls, PerspectiveCamera } from '@react-three/drei';
 import ChessBoard from './ChessBoard';
 import ChessPieces from './ChessPieces';
 import SceneEnvironment from './SceneEnvironment';
+import SceneLighting from './SceneLighting';
+import TableSurface from './TableSurface';
+import ContactShadowsLayer from './ContactShadowsLayer';
+import SquareHighlights from './SquareHighlights';
+import PostProcessingEffects from './PostProcessingEffects';
 
 export default function ChessScene() {
   return (
@@ -19,17 +24,14 @@ export default function ChessScene() {
         minDistance={5}
         maxDistance={15}
       />
-      <ambientLight intensity={0.4} />
-      <directionalLight
-        position={[5, 10, 5]}
-        intensity={1.2}
-        castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-      />
+      <SceneLighting />
       <SceneEnvironment />
+      <TableSurface />
       <ChessBoard />
+      <SquareHighlights />
       <ChessPieces />
+      <ContactShadowsLayer />
+      <PostProcessingEffects />
     </Canvas>
   );
 }

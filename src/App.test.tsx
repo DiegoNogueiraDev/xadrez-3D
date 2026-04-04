@@ -13,6 +13,7 @@ vi.mock('@react-three/drei', () => ({
   PerspectiveCamera: () => null,
   Text: ({ children }: any) => children,
   Environment: () => null,
+  ContactShadows: () => null,
   useGLTF: Object.assign(
     () => ({ scene: { clone: () => ({}) }, animations: [] }),
     { preload: () => {} }
@@ -44,6 +45,27 @@ vi.mock('./lib/soundAssets', () => ({
 
 vi.mock('./hooks/useAudioResume', () => ({
   useAudioResume: vi.fn(),
+}));
+
+vi.mock('./hooks/useAudioSync', () => ({
+  useAudioSync: vi.fn(),
+}));
+
+vi.mock('@react-three/postprocessing', () => ({
+  EffectComposer: ({ children }: any) => children,
+  Bloom: () => null,
+  Vignette: () => null,
+  SSAO: () => null,
+}));
+
+vi.mock('@react-spring/three', () => ({
+  useSpring: (props: any) => props,
+  animated: {
+    group: (props: any) => {
+      const { children, scale, ...rest } = props;
+      return <group {...rest}>{children}</group>;
+    },
+  },
 }));
 
 import App from './App';

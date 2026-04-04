@@ -1,0 +1,13 @@
+[     129ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:5173/node_modules/.vite/deps/chunk-PBZCXXKM.js?v=f3d3d404:19834
+[    9711ms] [WARNING] THREE.THREE.Clock: This module has been deprecated. Please use THREE.Timer instead. @ http://localhost:5173/node_modules/.vite/deps/chunk-X2GNN3BE.js?v=f3d3d404:745
+[   10058ms] [WARNING] THREE.WebGLShadowMap: PCFSoftShadowMap has been deprecated. Using PCFShadowMap instead. @ http://localhost:5173/node_modules/.vite/deps/chunk-X2GNN3BE.js?v=f3d3d404:745
+[   52552ms] NotFoundError: Failed to execute 'releasePointerCapture' on 'Element': No active pointer with the given id is found.
+    at HTMLDocument.onPointerUp (http://localhost:5173/node_modules/.vite/deps/@react-three_drei.js?v=24a4c0c9:20797:57)
+    at eval (eval at evaluate (:302:30), <anonymous>:10:12)
+    at new Promise (<anonymous>)
+    at eval (eval at evaluate (:302:30), <anonymous>:2:10)
+    at UtilityScript.evaluate (<anonymous>:304:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+[   53054ms] NotFoundError: Failed to execute 'releasePointerCapture' on 'Element': No active pointer with the given id is found.
+    at HTMLDocument.onPointerUp (http://localhost:5173/node_modules/.vite/deps/@react-three_drei.js?v=24a4c0c9:20797:57)
+    at eval (eval at evaluate (:302:30), <anonymous>:16:14)
