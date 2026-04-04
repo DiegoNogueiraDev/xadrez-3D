@@ -13,6 +13,9 @@ export default function ChatPanel() {
   const playerColor = useGameStore((s) => s.playerColor);
   const turn = useGameStore((s) => s.turn);
   const isOnline = useGameStore((s) => s.isOnline);
+  const playerRole = useGameStore((s) => s.playerRole);
+
+  const isSpectator = playerRole === 'spectator';
 
   const [input, setInput] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -77,22 +80,24 @@ export default function ChatPanel() {
             <div ref={messagesEndRef} />
           </div>
 
-          <form
-            onSubmit={handleSend}
-            className="border-t border-neutral-700 p-2"
-          >
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder={
-                isOnline
-                  ? 'Mensagem...'
-                  : `${turn === 'w' ? 'Brancas' : 'Pretas'} diz...`
-              }
-              className="w-full bg-neutral-900 border border-neutral-600 rounded px-2 py-1.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 transition-colors"
-            />
-          </form>
+          {!isSpectator && (
+            <form
+              onSubmit={handleSend}
+              className="border-t border-neutral-700 p-2"
+            >
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder={
+                  isOnline
+                    ? 'Mensagem...'
+                    : `${turn === 'w' ? 'Brancas' : 'Pretas'} diz...`
+                }
+                className="w-full bg-neutral-900 border border-neutral-600 rounded px-2 py-1.5 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 transition-colors"
+              />
+            </form>
+          )}
         </div>
       )}
     </div>

@@ -56,10 +56,12 @@ vi.mock('./hooks/useNetwork', () => {
     useNetwork: () => ({
       createGame: vi.fn().mockResolvedValue('abc123'),
       joinGame: vi.fn().mockResolvedValue(undefined),
+      spectateGame: vi.fn().mockResolvedValue(undefined),
       startLocalGame: vi.fn(),
       disconnect: vi.fn(),
       connectionStatus: 'disconnected',
       gameId: null,
+      playerCountry: null,
     }),
   };
 });

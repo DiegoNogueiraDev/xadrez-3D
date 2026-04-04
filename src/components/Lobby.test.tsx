@@ -17,6 +17,7 @@ describe('Lobby', () => {
   const defaultProps = {
     onCreateGame: vi.fn().mockResolvedValue('abc123'),
     onJoinGame: vi.fn().mockResolvedValue(undefined),
+    onSpectateGame: vi.fn().mockResolvedValue(undefined),
     onLocalGame: vi.fn(),
     createdGameId: null as string | null,
     connectionStatus: 'disconnected',

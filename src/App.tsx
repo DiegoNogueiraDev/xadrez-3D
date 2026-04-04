@@ -22,7 +22,7 @@ export default function App() {
   useAudioResume();
   useAudioSync();
 
-  const { createGame, joinGame, startLocalGame, connectionStatus, gameId } =
+  const { createGame, joinGame, spectateGame, startLocalGame, connectionStatus, gameId } =
     useNetwork();
 
   const showGame = gamePhase === 'playing' || gamePhase === 'ended';
@@ -38,6 +38,7 @@ export default function App() {
         <Lobby
           onCreateGame={createGame}
           onJoinGame={joinGame}
+          onSpectateGame={spectateGame}
           onLocalGame={startLocalGame}
           createdGameId={gameId}
           connectionStatus={connectionStatus}

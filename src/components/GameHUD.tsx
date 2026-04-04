@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useGameStore } from '../stores/useGameStore';
 import { useNetworkStore } from '../stores/useNetworkStore';
+import { getCountryByCode } from '../lib/countries';
 
 function getGameStatus(isCheckmate: boolean, isStalemate: boolean, isCheck: boolean): string {
   if (isCheckmate) return 'Xeque-mate!';
@@ -16,15 +17,24 @@ export default function GameHUD() {
   const isCheckmate = useGameStore((s) => s.isCheckmate);
   const isStalemate = useGameStore((s) => s.isStalemate);
   const isOnline = useGameStore((s) => s.isOnline);
+  const playerRole = useGameStore((s) => s.playerRole);
 
   const connectionStatus = useNetworkStore((s) => s.connectionStatus);
   const gameId = useNetworkStore((s) => s.gameId);
+  const spectatorCount = useNetworkStore((s) => s.spectatorCount);
+  const playerCountry = useNetworkStore((s) => s.playerCountry);
+  const opponentCountry = useNetworkStore((s) => s.opponentCountry);
 
   const [copied, setCopied] = useState(false);
 
   const turnLabel = turn === 'w' ? 'Brancas' : 'Pretas';
   const playerLabel = playerColor === 'w' ? 'Brancas' : 'Pretas';
   const status = getGameStatus(isCheckmate, isStalemate, isCheck);
+
+  const whiteCountry = playerColor === 'w' ? playerCountry : opponentCountry;
+  const blackCountry = playerColor === 'b' ? playerCountry : opponentCountry;
+  const whiteFlag = whiteCountry ? getCountryByCode(whiteCountry)?.flag : null;
+  const blackFlag = blackCountry ? getCountryByCode(blackCountry)?.flag : null;
 
   const handleCopyId = () => {
     if (gameId) {
@@ -46,11 +56,23 @@ export default function GameHUD() {
         Turno: <span className="font-semibold">{turnLabel}</span>
       </div>
 
+      {isOnline && (whiteFlag || blackFlag) && (
+        <div className="bg-neutral-800/90 border border-neutral-700 rounded-md px-3 py-1.5 text-sm text-white flex items-center gap-3">
+          <span>{whiteFlag || '\u2659'} Brancas</span>
+          <span className="text-neutral-500">vs</span>
+          <span>{blackFlag || '\u265F'} Pretas</span>
+        </div>
+      )}
+
       <div
         data-testid="player-color"
         className="bg-neutral-800/90 border border-neutral-700 rounded-md px-3 py-1.5 text-sm text-white"
       >
-        Jogador: <span className="font-semibold">{playerLabel}</span>
+        {playerRole === 'spectator' ? (
+          <span className="font-semibold text-amber-300">Modo Espectador</span>
+        ) : (
+          <>Jogador: <span className="font-semibold">{playerLabel}</span></>
+        )}
       </div>
 
       <div
@@ -86,6 +108,13 @@ export default function GameHUD() {
                   : 'Desconectado'}
             </span>
           </div>
+
+          {spectatorCount > 0 && (
+            <div className="bg-neutral-800/90 border border-neutral-700 rounded-md px-3 py-1.5 text-sm text-neutral-300 flex items-center gap-1.5">
+              <span className="text-base leading-none">{'\uD83D\uDC41'}</span>
+              <span>{spectatorCount} assistindo</span>
+            </div>
+          )}
 
           {gameId && (
             <button

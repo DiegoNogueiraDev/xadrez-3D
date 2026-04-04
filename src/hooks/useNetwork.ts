@@ -7,13 +7,15 @@ import { useChatStore } from '../stores/useChatStore';
 export function useNetwork() {
   const setConnectionStatus = useNetworkStore((s) => s.setConnectionStatus);
   const setGameId = useNetworkStore((s) => s.setGameId);
+  const setSpectatorCount = useNetworkStore((s) => s.setSpectatorCount);
+  const setOpponentCountry = useNetworkStore((s) => s.setOpponentCountry);
   const connectionStatus = useNetworkStore((s) => s.connectionStatus);
   const gameId = useNetworkStore((s) => s.gameId);
+  const playerCountry = useNetworkStore((s) => s.playerCountry);
   const resetNetwork = useNetworkStore((s) => s.resetNetwork);
 
   const handlerRef = useRef<((msg: GameMessage) => void) | null>(null);
 
-  // Register network message handler
   useEffect(() => {
     const handler = (msg: GameMessage) => {
       switch (msg.type) {
@@ -28,7 +30,20 @@ export function useNetwork() {
           break;
         }
         case 'ready': {
+          if (msg.data?.country) {
+            useNetworkStore.getState().setOpponentCountry(msg.data.country);
+          }
           useGameStore.getState().setGamePhase('playing');
+          break;
+        }
+        case 'player-info': {
+          if (msg.data?.country) {
+            useNetworkStore.getState().setOpponentCountry(msg.data.country);
+          }
+          break;
+        }
+        case 'spectator-count': {
+          useNetworkStore.getState().setSpectatorCount(msg.data.count);
           break;
         }
       }
@@ -39,19 +54,19 @@ export function useNetwork() {
 
     networkManager.onConnectionChange = (connected) => {
       setConnectionStatus(connected ? 'connected' : 'disconnected');
-      if (!connected) {
-        // Opponent disconnected during game
-        console.log('[Network] Connection lost');
-      }
     };
 
     networkManager.onPlayerJoined = () => {
       setConnectionStatus('connected');
-      // Host: start the game when opponent joins
       if (networkManager.isHost) {
-        networkManager.send({ type: 'ready', data: { color: 'b' } });
+        const country = useNetworkStore.getState().playerCountry;
+        networkManager.send({ type: 'ready', data: { color: 'b', country } });
         useGameStore.getState().setGamePhase('playing');
       }
+    };
+
+    networkManager.onSpectatorCountChange = (count) => {
+      setSpectatorCount(count);
     };
 
     return () => {
@@ -59,7 +74,7 @@ export function useNetwork() {
         networkManager.offMessage(handlerRef.current);
       }
     };
-  }, [setConnectionStatus]);
+  }, [setConnectionStatus, setSpectatorCount, setOpponentCountry]);
 
   const createGame = useCallback(async () => {
     setConnectionStatus('connecting');
@@ -68,6 +83,7 @@ export function useNetwork() {
       setGameId(id);
       useGameStore.getState().setPlayerColor('w');
       useGameStore.getState().setIsOnline(true);
+      useGameStore.getState().setPlayerRole('player');
       useGameStore.getState().setGamePhase('waiting');
       return id;
     } catch (err) {
@@ -84,6 +100,27 @@ export function useNetwork() {
       setConnectionStatus('connected');
       useGameStore.getState().setPlayerColor('b');
       useGameStore.getState().setIsOnline(true);
+      useGameStore.getState().setPlayerRole('player');
+      useGameStore.getState().setGamePhase('playing');
+      // Send country info to host
+      const country = useNetworkStore.getState().playerCountry;
+      if (country) {
+        networkManager.send({ type: 'player-info', data: { country } });
+      }
+    } catch (err) {
+      setConnectionStatus('disconnected');
+      throw err;
+    }
+  }, [setConnectionStatus, setGameId]);
+
+  const spectateGame = useCallback(async (id: string) => {
+    setConnectionStatus('connecting');
+    try {
+      await networkManager.joinAsSpectator(id);
+      setGameId(id);
+      setConnectionStatus('connected');
+      useGameStore.getState().setIsOnline(true);
+      useGameStore.getState().setPlayerRole('spectator');
       useGameStore.getState().setGamePhase('playing');
     } catch (err) {
       setConnectionStatus('disconnected');
@@ -93,6 +130,7 @@ export function useNetwork() {
 
   const startLocalGame = useCallback(() => {
     useGameStore.getState().setIsOnline(false);
+    useGameStore.getState().setPlayerRole('player');
     useGameStore.getState().setGamePhase('playing');
   }, []);
 
@@ -104,9 +142,11 @@ export function useNetwork() {
   return {
     createGame,
     joinGame,
+    spectateGame,
     startLocalGame,
     disconnect,
     connectionStatus,
     gameId,
+    playerCountry,
   };
 }

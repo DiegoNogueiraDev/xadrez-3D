@@ -32,6 +32,7 @@ interface GameState {
   isStalemate: boolean;
   playerColor: Color;
   isOnline: boolean;
+  playerRole: 'player' | 'spectator';
 
   // Actions
   selectSquare: (square: string) => void;
@@ -41,6 +42,7 @@ interface GameState {
   setGamePhase: (phase: GamePhase) => void;
   setPlayerColor: (color: Color) => void;
   setIsOnline: (online: boolean) => void;
+  setPlayerRole: (role: 'player' | 'spectator') => void;
 }
 
 function chessBoardToArray(chess: Chess): (BoardPiece | null)[][] {
@@ -67,6 +69,7 @@ function createInitialState() {
     isStalemate: false,
     playerColor: 'w' as Color,
     isOnline: false,
+    playerRole: 'player' as 'player' | 'spectator',
   };
 }
 
@@ -118,8 +121,11 @@ export const useGameStore = create<GameState>((set, get) => ({
   ...createInitialState(),
 
   selectSquare: (square: string) => {
-    const { chess, selectedSquare, gamePhase, isOnline, playerColor } = get();
+    const { chess, selectedSquare, gamePhase, isOnline, playerColor, playerRole } = get();
     if (gamePhase !== 'playing') return;
+
+    // Spectators cannot interact
+    if (playerRole === 'spectator') return;
 
     // In online mode, only allow selecting/moving your own pieces
     if (isOnline && chess.turn() !== playerColor) return;
@@ -217,5 +223,9 @@ export const useGameStore = create<GameState>((set, get) => ({
 
   setIsOnline: (online: boolean) => {
     set({ isOnline: online });
+  },
+
+  setPlayerRole: (role: 'player' | 'spectator') => {
+    set({ playerRole: role });
   },
 }));

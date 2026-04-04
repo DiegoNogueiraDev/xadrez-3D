@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { COUNTRIES } from '../lib/countries';
+import { useNetworkStore } from '../stores/useNetworkStore';
 
 interface LobbyProps {
   onCreateGame: () => Promise<string>;
   onJoinGame: (gameId: string) => Promise<void>;
+  onSpectateGame: (gameId: string) => Promise<void>;
   onLocalGame: () => void;
   createdGameId: string | null;
   connectionStatus: string;
@@ -12,6 +15,7 @@ interface LobbyProps {
 export default function Lobby({
   onCreateGame,
   onJoinGame,
+  onSpectateGame,
   onLocalGame,
   createdGameId,
   connectionStatus,
@@ -20,14 +24,18 @@ export default function Lobby({
   const [error, setError] = useState('');
   const [isCreating, setIsCreating] = useState(false);
   const [isJoining, setIsJoining] = useState(false);
+  const [isSpectating, setIsSpectating] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const playerCountry = useNetworkStore((s) => s.playerCountry);
+  const setPlayerCountry = useNetworkStore((s) => s.setPlayerCountry);
 
   const handleCreate = async () => {
     setError('');
     setIsCreating(true);
     try {
       await onCreateGame();
-    } catch (err) {
+    } catch {
       setError('Erro ao criar jogo. Tente novamente.');
       setIsCreating(false);
     }
@@ -39,9 +47,21 @@ export default function Lobby({
     setIsJoining(true);
     try {
       await onJoinGame(gameId.trim());
-    } catch (err) {
+    } catch {
       setError('Erro ao conectar. Verifique o ID e tente novamente.');
       setIsJoining(false);
+    }
+  };
+
+  const handleSpectate = async () => {
+    if (!gameId.trim()) return;
+    setError('');
+    setIsSpectating(true);
+    try {
+      await onSpectateGame(gameId.trim());
+    } catch {
+      setError('Erro ao conectar como espectador.');
+      setIsSpectating(false);
     }
   };
 
@@ -104,6 +124,25 @@ export default function Lobby({
           </div>
         ) : (
           <div className="space-y-4">
+            {/* Country selector */}
+            <div>
+              <label className="block text-sm text-neutral-400 mb-1">
+                Seu pa\u00eds
+              </label>
+              <select
+                value={playerCountry || ''}
+                onChange={(e) => setPlayerCountry(e.target.value || null)}
+                className="w-full py-2.5 px-3 bg-neutral-900 border border-neutral-600 rounded-lg text-white focus:outline-none focus:border-emerald-500 transition-colors"
+              >
+                <option value="">Selecione...</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c.code} value={c.code}>
+                    {c.flag} {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <button
               onClick={handleCreate}
               disabled={isCreating}
@@ -127,13 +166,22 @@ export default function Lobby({
               className="w-full py-3 px-4 bg-neutral-900 border border-neutral-600 rounded-lg text-white placeholder-neutral-500 focus:outline-none focus:border-emerald-500 transition-colors"
             />
 
-            <button
-              onClick={handleJoin}
-              disabled={!gameId.trim() || isJoining}
-              className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
-            >
-              {isJoining ? 'Conectando...' : 'Entrar'}
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleJoin}
+                disabled={!gameId.trim() || isJoining}
+                className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+              >
+                {isJoining ? 'Conectando...' : 'Entrar'}
+              </button>
+              <button
+                onClick={handleSpectate}
+                disabled={!gameId.trim() || isSpectating}
+                className="flex-1 py-3 px-4 bg-amber-700 hover:bg-amber-600 disabled:bg-neutral-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors"
+              >
+                {isSpectating ? 'Conectando...' : 'Assistir'}
+              </button>
+            </div>
 
             <div className="flex items-center gap-2 text-neutral-400">
               <div className="flex-1 h-px bg-neutral-600" />
