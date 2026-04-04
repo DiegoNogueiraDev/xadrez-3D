@@ -1,4 +1,4 @@
-import { Suspense, useMemo } from 'react';
+import React, { Suspense, useMemo } from 'react';
 import { Text, useGLTF } from '@react-three/drei';
 import { BOARD_SIZE, SQUARE_SIZE, BOARD_OFFSET } from '../utils/constants';
 import BoardSquare from './BoardSquare';
@@ -27,7 +27,7 @@ function GLTFBoard() {
 
 // Invisible interaction squares for raycasting (click detection)
 function InteractionSquares() {
-  const squares: JSX.Element[] = [];
+  const squares: React.JSX.Element[] = [];
   for (let file = 0; file < BOARD_SIZE; file++) {
     for (let rank = 0; rank < BOARD_SIZE; rank++) {
       squares.push(<BoardSquare key={`${file}-${rank}`} file={file} rank={rank} />);
@@ -74,7 +74,7 @@ function CoordinateLabels() {
 
 // Procedural fallback board (simple colored squares)
 function ProceduralBoard() {
-  const squares: JSX.Element[] = [];
+  const squares: React.JSX.Element[] = [];
   for (let file = 0; file < BOARD_SIZE; file++) {
     for (let rank = 0; rank < BOARD_SIZE; rank++) {
       squares.push(<BoardSquare key={`${file}-${rank}`} file={file} rank={rank} />);

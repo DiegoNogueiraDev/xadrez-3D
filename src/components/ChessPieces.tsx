@@ -1,3 +1,4 @@
+import React from 'react';
 import { SQUARE_SIZE, BOARD_OFFSET, PIECE_HEIGHT_OFFSET } from '../utils/constants';
 import { useGameStore } from '../stores/useGameStore';
 import ChessPiece from './ChessPiece';
@@ -38,7 +39,7 @@ function squareToPosition(square: string): [number, number, number] {
 export default function ChessPieces() {
   const board = useGameStore((s) => s.board);
 
-  const pieces: JSX.Element[] = [];
+  const pieces: React.JSX.Element[] = [];
 
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
