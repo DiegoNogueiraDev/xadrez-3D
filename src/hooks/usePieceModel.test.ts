@@ -59,4 +59,19 @@ describe('usePieceModel', () => {
   it('preloads all 12 models', () => {
     expect(mockPreload).toHaveBeenCalledTimes(12);
   });
+
+  it('disables raycast on mesh nodes to prevent click interception', () => {
+    const { result } = renderHook(() => usePieceModel('n', 'w'));
+    const scene = result.current.scene;
+
+    // All mesh children should have raycast disabled (no-op)
+    scene.traverse((node: THREE.Object3D) => {
+      if ((node as THREE.Mesh).isMesh) {
+        const raycaster = new THREE.Raycaster();
+        const intersections: THREE.Intersection[] = [];
+        node.raycast(raycaster, intersections);
+        expect(intersections).toHaveLength(0);
+      }
+    });
+  });
 });

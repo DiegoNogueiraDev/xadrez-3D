@@ -11,7 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@mcp-graph-workflow/mcp-graph": "^5.34.1",
+    "@mcp-graph-workflow/mcp-graph": "^6.0.0",
     "@react-spring/core": "^10.0.3",
     "@react-spring/three": "^10.0.3",
     "@react-three/drei": "^10.7.7",
