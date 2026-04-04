@@ -15,14 +15,14 @@ export default function BoardSquare({ file, rank }: BoardSquareProps) {
 
   return (
     <mesh
-      position={[x, -0.05, z]}
+      position={[x, 0.02, z]}
       onClick={onClick}
       onPointerOver={onPointerOver}
       onPointerOut={onPointerOut}
       name={`square-${squareName}-${isLight ? 'light' : 'dark'}`}
     >
-      <boxGeometry args={[SQUARE_SIZE, 0.1, SQUARE_SIZE]} />
-      <meshStandardMaterial transparent opacity={0} />
+      <boxGeometry args={[SQUARE_SIZE, 0.05, SQUARE_SIZE]} />
+      <meshBasicMaterial transparent opacity={0} depthWrite={false} />
     </mesh>
   );
 }
