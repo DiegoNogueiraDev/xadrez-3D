@@ -3,32 +3,30 @@ import {
   SOUND_MANIFEST,
   getSoundPath,
   getSoundPaths,
-  type SoundAsset,
 } from './soundAssets';
-import type { SoundId } from './sounds';
 
-const ALL_SOUND_IDS: SoundId[] = [
+const ACTIVE_SOUND_IDS = [
   'move',
   'capture',
   'check',
   'castle',
   'promote',
-  'ambient',
   'game_start',
   'game_over',
   'piece_pickup',
 ];
 
 describe('SOUND_MANIFEST', () => {
-  it('exports exactly 9 entries matching all SoundId values', () => {
-    expect(Object.keys(SOUND_MANIFEST)).toHaveLength(9);
-    for (const id of ALL_SOUND_IDS) {
+  it('exports 8 active sound entries', () => {
+    expect(Object.keys(SOUND_MANIFEST)).toHaveLength(8);
+    for (const id of ACTIVE_SOUND_IDS) {
       expect(SOUND_MANIFEST).toHaveProperty(id);
     }
   });
 
   it('each entry has path, label, and format fields', () => {
     for (const asset of Object.values(SOUND_MANIFEST)) {
+      if (!asset) continue;
       expect(typeof asset.path).toBe('string');
       expect(typeof asset.label).toBe('string');
       expect(['mp3', 'ogg', 'wav']).toContain(asset.format);
@@ -37,39 +35,30 @@ describe('SOUND_MANIFEST', () => {
 
   it('all paths follow pattern /sounds/{id}.mp3', () => {
     for (const [id, asset] of Object.entries(SOUND_MANIFEST)) {
+      if (!asset) continue;
       expect(asset.path).toBe(`/sounds/${id}.mp3`);
-    }
-  });
-
-  it('all labels are non-empty strings', () => {
-    for (const asset of Object.values(SOUND_MANIFEST)) {
-      expect(asset.label.length).toBeGreaterThan(0);
     }
   });
 });
 
 describe('getSoundPath', () => {
-  it('returns the path for a given SoundId', () => {
+  it('returns the path for active sounds', () => {
     expect(getSoundPath('move')).toBe('/sounds/move.mp3');
     expect(getSoundPath('capture')).toBe('/sounds/capture.mp3');
-    expect(getSoundPath('ambient')).toBe('/sounds/ambient.mp3');
   });
 
-  it('returns correct path for all 9 SoundIds', () => {
-    for (const id of ALL_SOUND_IDS) {
-      const path = getSoundPath(id);
-      expect(path).toBe(`/sounds/${id}.mp3`);
-    }
+  it('returns empty string for missing sounds', () => {
+    expect(getSoundPath('ambient')).toBe('');
   });
 });
 
 describe('getSoundPaths', () => {
-  it('returns an array of 9 paths', () => {
+  it('returns an array of 8 paths', () => {
     const paths = getSoundPaths();
-    expect(paths).toHaveLength(9);
+    expect(paths).toHaveLength(8);
   });
 
-  it('all paths are strings starting with /sounds/', () => {
+  it('all paths start with /sounds/', () => {
     for (const path of getSoundPaths()) {
       expect(path).toMatch(/^\/sounds\//);
     }

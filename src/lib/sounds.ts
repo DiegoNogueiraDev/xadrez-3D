@@ -23,6 +23,7 @@ export class SoundManager {
 
   init(): void {
     for (const [id, asset] of Object.entries(SOUND_MANIFEST)) {
+      if (!asset) continue;
       const howl = new Howl({
         src: [asset.path],
         preload: true,

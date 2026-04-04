@@ -77,7 +77,7 @@ describe('SoundManager', () => {
   });
 
   describe('SoundId type', () => {
-    it('accepts all 9 valid sound IDs', () => {
+    it('accepts valid sound IDs', () => {
       const validIds: SoundId[] = [
         'move',
         'capture',
@@ -94,18 +94,10 @@ describe('SoundManager', () => {
   });
 
   describe('init()', () => {
-    it('creates Howl instances for all sound IDs', () => {
+    it('creates Howl instances for active sounds in manifest', () => {
       soundManager.init();
-      expect(mockHowlConstructor).toHaveBeenCalledTimes(9);
-    });
-
-    it('creates ambient sound with loop:true', () => {
-      soundManager.init();
-      const ambientCall = mockHowlConstructor.mock.calls.find(
-        (call: any) => call[0].src[0].includes('ambient')
-      );
-      expect(ambientCall).toBeDefined();
-      expect(ambientCall![0].loop).toBe(true);
+      // 8 active sounds (ambient removed from manifest)
+      expect(mockHowlConstructor).toHaveBeenCalledTimes(8);
     });
   });
 
@@ -184,15 +176,15 @@ describe('SoundManager', () => {
       mockStop.mockClear();
     });
 
-    it('playAmbient() plays the ambient sound', () => {
+    it('playAmbient() does nothing when ambient not in manifest', () => {
       soundManager.playAmbient();
-      expect(mockPlay).toHaveBeenCalled();
+      // ambient is not in manifest, so play should not be called
+      expect(mockPlay).not.toHaveBeenCalled();
     });
 
-    it('stopAmbient() stops the ambient sound', () => {
-      soundManager.playAmbient();
+    it('stopAmbient() does nothing when ambient not loaded', () => {
       soundManager.stopAmbient();
-      expect(mockStop).toHaveBeenCalled();
+      expect(mockStop).not.toHaveBeenCalled();
     });
   });
 });
