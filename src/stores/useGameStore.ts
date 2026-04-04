@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 import { Chess, type Square, type PieceSymbol, type Color } from 'chess.js';
+import { soundManager } from '../lib/sounds';
+import { getMoveSound } from '../lib/moveSound';
 
 export type GamePhase = 'lobby' | 'loading' | 'playing' | 'ended';
 
@@ -127,6 +129,8 @@ export const useGameStore = create<GameState>((set, get) => ({
         ];
       }
 
+      const isCheck = chess.isCheck();
+
       set({
         board: chessBoardToArray(chess),
         turn: chess.turn(),
@@ -134,11 +138,15 @@ export const useGameStore = create<GameState>((set, get) => ({
         legalMoves: [],
         capturedPieces: newCaptured,
         moveHistory: [...get().moveHistory, move.san],
-        isCheck: chess.isCheck(),
+        isCheck,
         isCheckmate: chess.isCheckmate(),
         isStalemate: chess.isStalemate(),
         gamePhase: chess.isGameOver() ? 'ended' : get().gamePhase,
       });
+
+      // Play sound for this move
+      const soundId = getMoveSound(move, isCheck);
+      soundManager.play(soundId);
 
       return true;
     } catch {
