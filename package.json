@@ -9,10 +9,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "three": "^0.183.0",
+    "@mcp-graph-workflow/mcp-graph": "^5.34.1",
+    "@tweenjs/tween.js": "^25.0.0",
     "chess.js": "^1.4.0",
     "peerjs": "^1.5.4",
-    "@tweenjs/tween.js": "^25.0.0"
+    "three": "^0.183.0"
   },
   "devDependencies": {
     "@types/three": "^0.183.0",
