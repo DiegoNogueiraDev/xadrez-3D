@@ -1,0 +1,47 @@
+- generic [ref=e3]:
+  - heading "Xadrez 3D" [level=1]
+  - generic [ref=e5]:
+    - heading "Xadrez 3D" [level=2] [ref=e6]
+    - generic [ref=e7]:
+      - generic [ref=e8]:
+        - generic [ref=e9]: Seu país
+        - combobox [ref=e10]:
+          - option "Selecione..." [selected]
+          - option "🇧🇷 Brasil"
+          - option "🇺🇸 Estados Unidos"
+          - option "🇬🇧 Reino Unido"
+          - option "🇩🇪 Alemanha"
+          - option "🇫🇷 França"
+          - option "🇪🇸 Espanha"
+          - option "🇵🇹 Portugal"
+          - option "🇮🇹 Itália"
+          - option "🇦🇷 Argentina"
+          - option "🇲🇽 México"
+          - option "🇯🇵 Japão"
+          - option "🇰🇷 Coreia do Sul"
+          - option "🇨🇳 China"
+          - option "🇮🇳 Índia"
+          - option "🇷🇺 Rússia"
+          - option "🇨🇦 Canadá"
+          - option "🇦🇺 Austrália"
+          - option "🇳🇱 Holanda"
+          - option "🇵🇱 Polônia"
+          - option "🇳🇴 Noruega"
+          - option "🇸🇪 Suécia"
+          - option "🇨🇱 Chile"
+          - option "🇨🇴 Colômbia"
+          - option "🇺🇾 Uruguai"
+          - option "🇹🇷 Turquia"
+          - option "🇪🇬 Egito"
+          - option "🇿🇦 África do Sul"
+          - option "🇳🇬 Nigéria"
+          - option "🇮🇱 Israel"
+          - option "🇦🇪 Emirados Árabes"
+      - button "Criar Jogo Online" [ref=e11]
+      - generic [ref=e14]: ou
+      - textbox "Game ID" [ref=e16]
+      - generic [ref=e17]:
+        - button "Entrar" [disabled] [ref=e18]
+        - button "Assistir" [disabled] [ref=e19]
+      - generic [ref=e22]: ou
+      - button "Jogar Local" [ref=e24]

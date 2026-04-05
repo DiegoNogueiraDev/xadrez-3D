@@ -236,23 +236,23 @@ src/
  |
  |-- stores/              # 5 stores Zustand
  |   |-- useGameStore.ts      # Estado do xadrez (board, turn, moves, check)
- |   |-- useNetworkStore.ts   # WebRTC (peer ID, conexao, oponente, espectadores)
- |   |-- useReactionStore.ts  # Reacoes ativas (auto-remove apos 3s)
+ |   |-- useNetworkStore.ts   # WebRTC (peer ID, conexão, oponente, espectadores)
+ |   |-- useReactionStore.ts  # Reações ativas (auto-remove após 3s)
  |   |-- useChatStore.ts      # Mensagens, unread count
- |   +-- useSettingsStore.ts  # Configuracoes persistidas em localStorage
+ |   +-- useSettingsStore.ts  # Configurações persistidas em localStorage
  |
  |-- hooks/               # 9 hooks customizados
- |   |-- usePieceAnimation.ts         # Spring animations para movimentacao
- |   |-- usePieceAnimationController  # Coordena animacoes complexas
- |   |-- usePieceModel.ts             # Carrega modelo GLTF da peca
- |   |-- useSelectionAnimation.ts     # Animacao de selecao (bounce)
+ |   |-- usePieceAnimation.ts         # Spring animations para movimentação
+ |   |-- usePieceAnimationController  # Coordena animações complexas
+ |   |-- usePieceModel.ts             # Carrega modelo GLTF da peça
+ |   |-- useSelectionAnimation.ts     # Animação de seleção (bounce)
  |   |-- useSquareInteraction.ts      # Click/hover em casas
- |   |-- useAudioSync.ts             # Sincroniza som com acoes
+ |   |-- useAudioSync.ts             # Sincroniza som com ações
  |   +-- ...
  |
- |-- game/                # 6 managers de logica
- |-- models/              # 7 geometrias de pecas (fallback procedurale)
- |-- lib/                 # 36 arquivos de configuracao
+ |-- game/                # 6 managers de lógica
+ |-- models/              # 7 geometrias de peças (fallback procedurale)
+ |-- lib/                 # 36 arquivos de configuração
  |-- network/             # PeerJS networking layer
  +-- scene/               # Controladores de cena Three.js
 ```
@@ -260,7 +260,7 @@ src/
 ### Fluxo de Dados
 
 ```
-Input do Usuario (click na casa)
+Input do Usuário (click na casa)
     |
     v
 useSquareInteraction --> useGameStore.selectSquare()
@@ -268,60 +268,60 @@ useSquareInteraction --> useGameStore.selectSquare()
     v
 chess.js valida movimento --> useGameStore.makeMove()
     |
-    +---> usePieceAnimation (anima peca 3D via React Spring)
+    +---> usePieceAnimation (anima peça 3D via React Spring)
     +---> useAudioSync (toca som via Howler.js)
     +---> NetworkManager.sendMove() (envia via WebRTC se online)
-    +---> ReactionOverlay (mostra reacao se houver)
+    +---> ReactionOverlay (mostra reação se houver)
 ```
 
 ---
 
-## 6. Metricas de Desenvolvimento
+## 6. Métricas de Desenvolvimento
 
 ### 6.1 Velocidade de Entrega
 
-| Metrica | Valor |
+| Métrica | Valor |
 |---------|-------|
 | **Dias de desenvolvimento** | 2 (3-4 abril 2026) |
 | **Total de commits** | 32 |
-| **Commits/dia (media)** | 16 |
+| **Commits/dia (média)** | 16 |
 | **Maior dia** | 26 commits (4 abril) |
 | **Hora de pico** | 00:00-03:00 UTC (madrugada) |
 
-### 6.2 Volume de Codigo
+### 6.2 Volume de Código
 
-| Metrica | Valor |
+| Métrica | Valor |
 |---------|-------|
-| **Linhas de codigo (src/)** | 10.403 |
+| **Linhas de código (src/)** | 10.403 |
 | **Linhas adicionadas** | 25.282 |
 | **Linhas removidas** | 1.617 |
-| **Saldo liquido** | +23.665 |
-| **Ratio insercao/remocao** | 15,6:1 |
+| **Saldo líquido** | +23.665 |
+| **Ratio inserção/remoção** | 15,6:1 |
 | **Arquivos modificados** | 400 |
 
 ### 6.3 Cobertura de Testes
 
-| Metrica | Valor |
+| Métrica | Valor |
 |---------|-------|
 | **Arquivos de teste** | 60 |
 | **Testes de componente** | 13 |
 | **Testes de hook** | 8 |
 | **Testes de store** | 4 |
-| **Testes de configuracao** | 34 |
-| **Teste de integracao** | 1 |
+| **Testes de configuração** | 34 |
+| **Teste de integração** | 1 |
 
 ### 6.4 Assets 3D
 
 | Tipo | Quantidade | Formato |
 |------|-----------|---------|
-| Modelos de pecas | 13 (6 tipos x 2 cores + tabuleiro) | .glb (glTF Binary) |
+| Modelos de peças | 13 (6 tipos x 2 cores + tabuleiro) | .glb (glTF Binary) |
 | Environment maps | 2 (medieval + studio) | .hdr |
 | Texturas PBR | 9 (3 materiais x 3 mapas) | .jpg |
 | Efeitos sonoros | 8 | .mp3 |
 
-### 6.5 Grafo de Execucao (mcp-graph)
+### 6.5 Grafo de Execução (mcp-graph)
 
-| Metrica | Valor |
+| Métrica | Valor |
 |---------|-------|
 | **Nodes totais** | 89 |
 | **Tasks** | 64 |
@@ -330,91 +330,91 @@ chess.js valida movimento --> useGameStore.makeMove()
 | **Milestones** | 4 |
 | **Interfaces** | 4 |
 | **Constraints** | 3 |
-| **Edges (dependencias)** | 217 |
-| **Taxa de conclusao** | 71,9% (64/89 done) |
+| **Edges (dependências)** | 217 |
+| **Taxa de conclusão** | 71,9% (64/89 done) |
 | **Sprints** | 4 |
 | **Nodes com AC** | 76 (85,4%) |
 | **Estimativa total** | 4.455 min (74,25h) |
 
 ---
 
-## 7. Analise de Produtividade
+## 7. Análise de Produtividade
 
 ### 7.1 Estimado vs. Realizado
 
-O mcp-graph estimou **74,25 horas** de esforco para as 89 tasks. O desenvolvimento real ocorreu em **~2 dias de trabalho intensivo** (~30-36 horas de sessao).
+O mcp-graph estimou **74,25 horas** de esforço para as 89 tasks. O desenvolvimento real ocorreu em **~2 dias de trabalho intensivo** (~30-36 horas de sessão).
 
-Isso representa uma **compressao de ~2x** no tempo estimado, explicavel por:
+Isso representa uma **compressão de ~2x** no tempo estimado, explicável por:
 
-1. **Pipeline automatizado** — O fluxo `next -> context -> implement -> analyze` eliminou tempo de decisao
-2. **Context7** — Zero tempo gasto buscando documentacao manualmente
-3. **TDD como acelerador** — Testes escritos primeiro criaram especificacoes executaveis, reduzindo ciclos de debug
+1. **Pipeline automatizado** — O fluxo `next -> context -> implement -> analyze` eliminou tempo de decisão
+2. **Context7** — Zero tempo gasto buscando documentação manualmente
+3. **TDD como acelerador** — Testes escritos primeiro criaram especificações executáveis, reduzindo ciclos de debug
 4. **WIP = 1** — Foco absoluto em uma task por vez eliminou context switching
 
 ### 7.2 Throughput
 
-| Metrica | Valor |
+| Métrica | Valor |
 |---------|-------|
-| **Tasks concluidas** | 64 |
+| **Tasks concluídas** | 64 |
 | **Dias ativos** | 2 |
 | **Throughput** | 32 tasks/dia |
-| **Cycle time medio** | ~28 min/task |
+| **Cycle time médio** | ~28 min/task |
 | **Commits por task** | ~0,5 (muitas tasks em um commit) |
 
-### 7.3 Distribuicao por Tamanho
+### 7.3 Distribuição por Tamanho
 
-| Tamanho | Qtd | % | Tempo medio estimado |
+| Tamanho | Qtd | % | Tempo médio estimado |
 |---------|-----|---|---------------------|
 | S (Small) | 22 | 31% | ~30 min |
 | M (Medium) | 41 | 58% | ~60 min |
 | L (Large) | 6 | 8,5% | ~120 min |
 | XL (Extra Large) | 2 | 2,8% | ~180 min |
 
-A maioria das tasks (89%) era S ou M — resultado direto da **decomposicao atomica** exigida pelo workflow.
+A maioria das tasks (89%) era S ou M — resultado direto da **decomposição atômica** exigida pelo workflow.
 
 ---
 
 ## 8. Dificuldades Encontradas
 
-### 8.1 Blender MCP — Addon Nao Ativo
+### 8.1 Blender MCP — Addon Não Ativo
 
-**Problema:** O blender-mcp requer um addon ativo no Blender para comunicacao via socket. Na data de desenvolvimento (3-4 abril 2026), o addon nao estava respondendo.
+**Problema:** O blender-mcp requer um addon ativo no Blender para comunicação via socket. Na data de desenvolvimento (3-4 abril 2026), o addon não estava respondendo.
 
-**Impacto:** Os modelos 3D das pecas precisaram ser obtidos/gerados por caminhos alternativos em vez de serem modelados interativamente via MCP.
+**Impacto:** Os modelos 3D das peças precisaram ser obtidos/gerados por caminhos alternativos em vez de serem modelados interativamente via MCP.
 
-**Aprendizado:** Depender de um unico pipeline para assets criticos e arriscado. Ter fallbacks (geometria procedural no codigo) salvou o projeto.
+**Aprendizado:** Depender de um único pipeline para assets críticos é arriscado. Ter fallbacks (geometria procedural no código) salvou o projeto.
 
 ### 8.2 TypeScript + React 19 + JSX Namespace
 
-**Problema:** React 19 removeu o namespace global `JSX`. Codigo que usava `JSX.Element[]` quebrou na compilacao.
+**Problema:** React 19 removeu o namespace global `JSX`. Código que usava `JSX.Element[]` quebrou na compilação.
 
-**Solucao:** Substituir por `React.JSX.Element[]` e adicionar import explicito de React.
+**Solução:** Substituir por `React.JSX.Element[]` e adicionar import explícito de React.
 
-**Impacto:** Bloqueou o build de producao. Resolvido em minutos gracas ao diagnostico preciso do compilador.
+**Impacto:** Bloqueou o build de produção. Resolvido em minutos graças ao diagnóstico preciso do compilador.
 
 ### 8.3 WebRTC e Conectividade P2P
 
-**Problema:** PeerJS depende de um servidor de sinalizacao e TURN/STUN para NAT traversal. Conexoes entre redes diferentes podem falhar silenciosamente.
+**Problema:** PeerJS depende de um servidor de sinalização e TURN/STUN para NAT traversal. Conexões entre redes diferentes podem falhar silenciosamente.
 
-**Mitigacao:** O jogo detecta falha de conexao e informa o usuario. O modo local funciona sem rede.
+**Mitigação:** O jogo detecta falha de conexão e informa o usuário. O modo local funciona sem rede.
 
-### 8.4 Performance 3D em Dispositivos Moveis
+### 8.4 Performance 3D em Dispositivos Móveis
 
-**Problema:** 15 modelos GLTF + environment map HDR + pos-processamento e pesado para GPUs mobile.
+**Problema:** 15 modelos GLTF + environment map HDR + pós-processamento é pesado para GPUs mobile.
 
-**Solucao:** Sistema de **quality presets** (low/medium/high) que desabilita sombras, particulas e efeitos em dispositivos mais fracos. Configuravel via `useSettingsStore`.
+**Solução:** Sistema de **quality presets** (low/medium/high) que desabilita sombras, partículas e efeitos em dispositivos mais fracos. Configurável via `useSettingsStore`.
 
-### 8.5 Materiais PBR sem Experiencia Previa
+### 8.5 Materiais PBR sem Experiência Prévia
 
-**Problema:** Nunca tendo trabalhado com texturas PBR (diffuse + normal + roughness), o conceito de como cada mapa afeta a aparencia final era completamente novo.
+**Problema:** Nunca tendo trabalhado com texturas PBR (diffuse + normal + roughness), o conceito de como cada mapa afeta a aparência final era completamente novo.
 
-**Como o MCP ajudou:** O context7 forneceu documentacao atualizada de Three.js sobre `MeshStandardMaterial`, e o mcp-graph manteve tasks atomicas como "configurar material de marmore claro" separadas de "configurar material de madeira" — tornando cada passo aprendivel isoladamente.
+**Como o MCP ajudou:** O context7 forneceu documentação atualizada de Three.js sobre `MeshStandardMaterial`, e o mcp-graph manteve tasks atômicas como "configurar material de mármore claro" separadas de "configurar material de madeira" — tornando cada passo aprendível isoladamente.
 
 ---
 
 ## 9. Impacto no mcp-graph
 
-Este projeto nao apenas **consumiu** o mcp-graph — ele **gerou melhorias** no proprio framework:
+Este projeto não apenas **consumiu** o mcp-graph — ele **gerou melhorias** no próprio framework:
 
 ### 9.1 Upgrade para v6.0
 
