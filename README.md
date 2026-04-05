@@ -440,10 +440,10 @@ O projeto serviu como campo de teste para princípios Lean/ToC no contexto de IA
 
 O projeto revelou necessidades que inspiraram features no mcp-graph:
 
-- **`rag_context`** — Busca semantica de contexto relevante (usado para encontrar padroes similares no codigo)
-- **`sync_stack_docs`** — Sincronizacao automatica de documentacao da stack
-- **`analyze(mode: "implement_done")`** — Validacao automatizada de completude
-- **Quality metrics** — Metricas de flow efficiency e cycle time
+- **`rag_context`** — Busca semântica de contexto relevante (usado para encontrar padrões similares no código)
+- **`sync_stack_docs`** — Sincronização automática de documentação da stack
+- **`analyze(mode: "implement_done")`** — Validação automatizada de completude
+- **Quality metrics** — Métricas de flow efficiency e cycle time
 
 ---
 
