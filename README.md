@@ -421,20 +421,20 @@ Este projeto não apenas **consumiu** o mcp-graph — ele **gerou melhorias** no
 Durante o desenvolvimento, o mcp-graph foi atualizado da v5.x para **v6.0**, trazendo:
 
 - **Pipeline simplificado** — De 6 chamadas (`next -> context -> rag_context -> implement -> analyze -> update_status`) para 2 (`start_task -> finish_task`)
-- **Phase Gates automatizados** — Validacoes entre fases sem intervencao manual
-- **Definition of Done com 8 checks** — Automacao completa de qualidade
+- **Phase Gates automatizados** — Validações entre fases sem intervenção manual
+- **Definition of Done com 8 checks** — Automação completa de qualidade
 
-### 9.2 Validacao do Modelo de Fluxo
+### 9.2 Validação do Modelo de Fluxo
 
-O projeto serviu como campo de teste para principios Lean/ToC no contexto de IA:
+O projeto serviu como campo de teste para princípios Lean/ToC no contexto de IA:
 
-| Principio | Validacao |
+| Princípio | Validação |
 |-----------|-----------|
 | **WIP = 1** | Confirmado — focus absoluto reduziu erros |
-| **Pull system** | `next` funcionou melhor que atribuicao manual |
+| **Pull system** | `next` funcionou melhor que atribuição manual |
 | **Little's Law** | `cycle_time = WIP / throughput` se manteve |
-| **TDD obrigatorio** | 60 arquivos de teste = zero regressao |
-| **Decomposicao atomica** | 89% das tasks eram S/M = gerenciaveis |
+| **TDD obrigatório** | 60 arquivos de teste = zero regressão |
+| **Decomposição atômica** | 89% das tasks eram S/M = gerenciáveis |
 
 ### 9.3 Novas Funcionalidades Inspiradas
 
