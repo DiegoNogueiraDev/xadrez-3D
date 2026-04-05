@@ -96,4 +96,17 @@ describe('Game Flow Integration', () => {
     expect(result).toBe(false);
     expect(useGameStore.getState().turn).toBe(before);
   });
+
+  it('captures via selectSquare (UI click simulation)', () => {
+    useGameStore.getState().setGamePhase('playing');
+    useGameStore.getState().makeMove('e2', 'e4');
+    useGameStore.getState().makeMove('d7', 'd5');
+
+    // Simulate UI: click e4 pawn, then click d5 (capture)
+    useGameStore.getState().selectSquare('e4');
+    useGameStore.getState().selectSquare('d5');
+
+    expect(useGameStore.getState().turn).toBe('b');
+    expect(useGameStore.getState().capturedPieces.w).toHaveLength(1);
+  });
 });

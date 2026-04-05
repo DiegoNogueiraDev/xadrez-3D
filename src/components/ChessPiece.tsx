@@ -70,8 +70,8 @@ const GLTF_SCALE = 5;
 function GLTFPiece({ type, color }: { type: PieceSymbol; color: Color }) {
   const { scene } = usePieceModel(type, color);
   return (
-    <group scale={[GLTF_SCALE, GLTF_SCALE, GLTF_SCALE]}>
-      <primitive object={scene} />
+    <group scale={[GLTF_SCALE, GLTF_SCALE, GLTF_SCALE]} raycast={() => {}}>
+      <primitive object={scene} raycast={() => {}} />
     </group>
   );
 }

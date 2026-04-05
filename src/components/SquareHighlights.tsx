@@ -13,7 +13,7 @@ function squareToPosition(square: string): [number, number, number] {
 function HighlightPlane({ square, color }: { square: string; color: string }) {
   const pos = squareToPosition(square);
   return (
-    <mesh position={pos} rotation={[-Math.PI / 2, 0, 0]} name={`highlight-${square}`}>
+    <mesh position={pos} rotation={[-Math.PI / 2, 0, 0]} name={`highlight-${square}`} raycast={() => {}}>
       <planeGeometry args={[SQUARE_SIZE * 0.9, SQUARE_SIZE * 0.9]} />
       <meshBasicMaterial color={color} transparent opacity={HIGHLIGHT_CONFIG.opacity} depthWrite={false} />
     </mesh>

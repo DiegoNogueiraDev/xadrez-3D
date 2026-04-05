@@ -68,6 +68,39 @@ describe('useGameStore', () => {
       useGameStore.getState().selectSquare('e4');
       expect(useGameStore.getState().selectedSquare).toBeNull();
     });
+
+    it('captures an enemy piece via selectSquare flow', () => {
+      useGameStore.getState().setGamePhase('playing');
+      // Setup: e4, d5
+      useGameStore.getState().makeMove('e2', 'e4');
+      useGameStore.getState().makeMove('d7', 'd5');
+
+      // Select white pawn on e4
+      useGameStore.getState().selectSquare('e4');
+      const afterSelect = useGameStore.getState();
+      expect(afterSelect.selectedSquare).toBe('e4');
+      expect(afterSelect.legalMoves).toContain('d5'); // capture square
+      expect(afterSelect.legalMoves).toContain('e5'); // non-capture
+
+      // Click capture target via selectSquare
+      useGameStore.getState().selectSquare('d5');
+      const afterCapture = useGameStore.getState();
+      expect(afterCapture.selectedSquare).toBeNull();
+      expect(afterCapture.turn).toBe('b');
+      expect(afterCapture.capturedPieces.w).toHaveLength(1);
+      expect(afterCapture.capturedPieces.w[0]).toMatchObject({ type: 'p', color: 'b' });
+    });
+
+    it('re-selects own piece when clicking another own piece', () => {
+      useGameStore.getState().setGamePhase('playing');
+      // Select knight on b1
+      useGameStore.getState().selectSquare('b1');
+      expect(useGameStore.getState().selectedSquare).toBe('b1');
+
+      // Click own pawn at d2 — should re-select, not move
+      useGameStore.getState().selectSquare('d2');
+      expect(useGameStore.getState().selectedSquare).toBe('d2');
+    });
   });
 
   describe('makeMove', () => {
