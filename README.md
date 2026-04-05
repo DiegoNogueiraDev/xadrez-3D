@@ -222,15 +222,15 @@ Configurado para validar que o jogo renderizava corretamente após cada sprint.
 ```
 src/
  |-- components/          # 22 componentes React
- |   |-- ChessScene.tsx       # Canvas principal (camera, controles, iluminacao)
+ |   |-- ChessScene.tsx       # Canvas principal (câmera, controles, iluminação)
  |   |-- ChessBoard.tsx       # Tabuleiro 8x8 com model GLTF
- |   |-- ChessPieces.tsx      # Renderiza todas as 32 pecas
- |   |-- ChessPiece.tsx       # Peca individual (model + animacao + interacao)
+ |   |-- ChessPieces.tsx      # Renderiza todas as 32 peças
+ |   |-- ChessPiece.tsx       # Peça individual (model + animação + interação)
  |   |-- BoardSquare.tsx      # Casa interativa com highlights
  |   |-- GameHUD.tsx          # Status do jogo (turno, jogador, estado)
- |   |-- Lobby.tsx            # Criacao/entrada em partidas
+ |   |-- Lobby.tsx            # Criação/entrada em partidas
  |   |-- ChatPanel.tsx        # Chat em tempo real
- |   |-- ReactionPicker.tsx   # Reacoes rapidas entre jogadores
+ |   |-- ReactionPicker.tsx   # Reações rápidas entre jogadores
  |   |-- SettingsPanel.tsx    # Volume, qualidade, tema
  |   +-- ...
  |
