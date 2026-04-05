@@ -127,7 +127,7 @@ export default function Lobby({
             {/* Country selector */}
             <div>
               <label className="block text-sm text-neutral-400 mb-1">
-                Seu pa\u00eds
+                Seu país
               </label>
               <select
                 value={playerCountry || ''}

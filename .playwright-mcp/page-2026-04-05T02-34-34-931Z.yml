@@ -1,0 +1,42 @@
+- generic [ref=e3]:
+  - heading "Xadrez 3D" [level=1]
+  - generic [ref=e29]:
+    - generic [ref=e30]: "Turno: Brancas"
+    - generic [ref=e31]: "Jogador: Brancas"
+    - generic [ref=e32]: Jogando
+  - generic [ref=e34]:
+    - heading "Configurações" [level=3] [ref=e35]
+    - generic [ref=e36] [cursor=pointer]:
+      - checkbox "Mudo" [ref=e37]
+      - text: Mudo
+    - generic [ref=e38]:
+      - generic [ref=e39]: "Volume: 80%"
+      - slider [ref=e40]: "0.8"
+    - generic [ref=e41]:
+      - text: Qualidade
+      - combobox [ref=e42]:
+        - option "Low"
+        - option "Medium"
+        - option "High" [selected]
+    - generic [ref=e43] [cursor=pointer]:
+      - checkbox "Sombras" [checked] [ref=e44]
+      - text: Sombras
+    - generic [ref=e45] [cursor=pointer]:
+      - checkbox "Partículas" [checked] [ref=e46]
+      - text: Partículas
+  - generic [ref=e47]:
+    - button "Chat" [ref=e49]:
+      - generic [ref=e50]: Chat
+    - generic [ref=e52]:
+      - button "👏" [ref=e53] [cursor=pointer]
+      - button "😮" [ref=e54] [cursor=pointer]
+      - button "😂" [ref=e55] [cursor=pointer]
+      - button "🔥" [ref=e56] [cursor=pointer]
+      - button "👎" [ref=e57] [cursor=pointer]
+      - button "💀" [ref=e58] [cursor=pointer]
+  - generic [ref=e60]:
+    - heading "Jogadas" [level=3] [ref=e61]
+    - paragraph [ref=e62]: Sem jogadas
+  - generic [ref=e64]:
+    - generic [ref=e66]: Brancas capturaram
+    - generic [ref=e68]: Pretas capturaram

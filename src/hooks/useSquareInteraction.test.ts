@@ -3,6 +3,10 @@ import { renderHook, act } from '@testing-library/react';
 import { useGameStore } from '../stores/useGameStore';
 import { useSquareInteraction } from './useSquareInteraction';
 
+function fakeThreeEvent() {
+  return { stopPropagation: vi.fn() } as any;
+}
+
 describe('useSquareInteraction', () => {
   beforeEach(() => {
     useGameStore.getState().resetGame();
@@ -20,7 +24,7 @@ describe('useSquareInteraction', () => {
     const spy = vi.spyOn(useGameStore.getState(), 'selectSquare');
     const { result } = renderHook(() => useSquareInteraction('e2'));
     act(() => {
-      result.current.onClick();
+      result.current.onClick(fakeThreeEvent());
     });
     expect(spy).toHaveBeenCalledWith('e2');
     spy.mockRestore();
@@ -29,7 +33,7 @@ describe('useSquareInteraction', () => {
   it('clicking own piece selects it', () => {
     const { result } = renderHook(() => useSquareInteraction('e2'));
     act(() => {
-      result.current.onClick();
+      result.current.onClick(fakeThreeEvent());
     });
     expect(useGameStore.getState().selectedSquare).toBe('e2');
     expect(useGameStore.getState().legalMoves.length).toBeGreaterThan(0);
@@ -38,10 +42,10 @@ describe('useSquareInteraction', () => {
   it('clicking same piece again deselects', () => {
     const { result } = renderHook(() => useSquareInteraction('e2'));
     act(() => {
-      result.current.onClick();
+      result.current.onClick(fakeThreeEvent());
     });
     act(() => {
-      result.current.onClick();
+      result.current.onClick(fakeThreeEvent());
     });
     expect(useGameStore.getState().selectedSquare).toBeNull();
   });
@@ -56,7 +60,7 @@ describe('useSquareInteraction', () => {
     // Click e4 to move
     const { result } = renderHook(() => useSquareInteraction('e4'));
     act(() => {
-      result.current.onClick();
+      result.current.onClick(fakeThreeEvent());
     });
     expect(useGameStore.getState().turn).toBe('b');
     expect(useGameStore.getState().selectedSquare).toBeNull();

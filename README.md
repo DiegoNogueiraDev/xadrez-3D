@@ -12,77 +12,77 @@
   <img src="docs/img/tabuleiro.png" alt="Tabuleiro 3D" width="700" />
 </p>
 
-> **Case Study:** Como um desenvolvedor sem experiencia em modelagem 3D construiu um jogo de xadrez completo com pecas ultra-realistas, multiplayer online e deploy em producao — em 2 dias — usando Claude Code + MCP (Model Context Protocol).
+> **Case Study:** Como um desenvolvedor sem experiência em modelagem 3D construiu um jogo de xadrez completo com peças ultra-realistas, multiplayer online e deploy em produção — em 2 dias — usando Claude Code + MCP (Model Context Protocol).
 
 ---
 
-## Sumario
+## Sumário
 
 - [Resumo](#resumo)
-- [1. Introducao](#1-introducao)
+- [1. Introdução](#1-introdução)
 - [2. Metodologia](#2-metodologia)
-- [3. Stack Tecnologica](#3-stack-tecnologica)
+- [3. Stack Tecnológica](#3-stack-tecnológica)
 - [4. Ferramentas MCP Utilizadas](#4-ferramentas-mcp-utilizadas)
 - [5. Arquitetura do Sistema](#5-arquitetura-do-sistema)
-- [6. Metricas de Desenvolvimento](#6-metricas-de-desenvolvimento)
-- [7. Analise de Produtividade](#7-analise-de-produtividade)
+- [6. Métricas de Desenvolvimento](#6-métricas-de-desenvolvimento)
+- [7. Análise de Produtividade](#7-análise-de-produtividade)
 - [8. Dificuldades Encontradas](#8-dificuldades-encontradas)
 - [9. Impacto no mcp-graph](#9-impacto-no-mcp-graph)
 - [10. Aprendizados](#10-aprendizados)
-- [11. Conclusao](#11-conclusao)
+- [11. Conclusão](#11-conclusão)
 - [12. Como Executar](#12-como-executar)
 - [13. Screenshots](#13-screenshots)
-- [14. Licenca](#14-licenca)
+- [14. Licença](#14-licença)
 
 ---
 
 ## Resumo
 
-Este documento apresenta o relato tecnico do desenvolvimento do **Xadrez 3D**, um jogo de xadrez com renderizacao tridimensional, pecas modeladas com materiais PBR (Physically-Based Rendering), multiplayer peer-to-peer via WebRTC, modo espectador, sistema de reacoes, chat em tempo real e efeitos de pos-processamento cinematograficos.
+Este documento apresenta o relato técnico do desenvolvimento do **Xadrez 3D**, um jogo de xadrez com renderização tridimensional, peças modeladas com materiais PBR (Physically-Based Rendering), multiplayer peer-to-peer via WebRTC, modo espectador, sistema de reações, chat em tempo real e efeitos de pós-processamento cinematográficos.
 
-O projeto foi desenvolvido inteiramente com auxilio de **Claude Code** (Anthropic) orquestrado pelo **mcp-graph v6.0** — um sistema de gestao de execucao baseado em grafo persistente (SQLite). Quatro servidores MCP foram utilizados simultaneamente: **mcp-graph** (workflow), **context7** (documentacao), **blender-mcp** (assets 3D) e **playwright** (testes visuais).
+O projeto foi desenvolvido inteiramente com auxílio de **Claude Code** (Anthropic) orquestrado pelo **mcp-graph v6.0** — um sistema de gestão de execução baseado em grafo persistente (SQLite). Quatro servidores MCP foram utilizados simultaneamente: **mcp-graph** (workflow), **context7** (documentação), **blender-mcp** (assets 3D) e **playwright** (testes visuais).
 
 **Resultados quantitativos:**
 
-| Metrica | Valor |
+| Métrica | Valor |
 |---------|-------|
 | Tempo total de desenvolvimento | ~2 dias |
 | Commits | 32 |
-| Linhas de codigo (src/) | 10.403 |
+| Linhas de código (src/) | 10.403 |
 | Linhas adicionadas total | 25.282 |
 | Arquivos modificados | 400 |
 | Componentes React | 22 |
 | Testes automatizados | 60 arquivos |
 | Modelos 3D | 15 (.glb) |
 | Nodes no grafo | 89 |
-| Taxa de conclusao | 71,9% (64/89) |
-| Esforco estimado (mcp-graph) | 74,25 horas |
+| Taxa de conclusão | 71,9% (64/89) |
+| Esforço estimado (mcp-graph) | 74,25 horas |
 
 ---
 
-## 1. Introducao
+## 1. Introdução
 
 ### 1.1 Contexto Pessoal
 
-O autor deste projeto — Diego Nogueira — e desenvolvedor TypeScript/React com experiencia em sistemas web, mas **nunca havia trabalhado com modelagem 3D, materiais PBR, iluminacao de cena ou pipeline de assets 3D** antes deste projeto.
+O autor deste projeto — Diego Nogueira — é desenvolvedor TypeScript/React com experiência em sistemas web, mas **nunca havia trabalhado com modelagem 3D, materiais PBR, iluminação de cena ou pipeline de assets 3D** antes deste projeto.
 
-A motivacao surgiu de uma pergunta simples: *"E possivel que um desenvolvedor web, sem experiencia em 3D, construa um jogo visualmente impressionante usando apenas ferramentas de IA?"*
+A motivação surgiu de uma pergunta simples: *"É possível que um desenvolvedor web, sem experiência em 3D, construa um jogo visualmente impressionante usando apenas ferramentas de IA?"*
 
 ### 1.2 O Desafio
 
-Construir um jogo de xadrez 3D nao e apenas renderizar cubos coloridos. Envolve:
+Construir um jogo de xadrez 3D não é apenas renderizar cubos coloridos. Envolve:
 
-- **Modelagem 3D** — 13 pecas unicas (6 tipos x 2 cores + tabuleiro) com geometria detalhada
-- **Materiais PBR** — Texturas fisicamente corretas (diffuse, normal, roughness) para marmore e madeira
-- **Iluminacao** — Environment maps HDR, sombras de contato, luzes direcionais
-- **Pos-processamento** — Bloom, color grading, anti-aliasing
-- **Logica de jogo** — Todas as regras do xadrez (en passant, roque, promocao, xeque-mate)
-- **Multiplayer** — Conexao peer-to-peer sem servidor dedicado
-- **UX completa** — Lobby, chat, reacoes, historico de jogadas, pecas capturadas
+- **Modelagem 3D** — 13 peças únicas (6 tipos x 2 cores + tabuleiro) com geometria detalhada
+- **Materiais PBR** — Texturas fisicamente corretas (diffuse, normal, roughness) para mármore e madeira
+- **Iluminação** — Environment maps HDR, sombras de contato, luzes direcionais
+- **Pós-processamento** — Bloom, color grading, anti-aliasing
+- **Lógica de jogo** — Todas as regras do xadrez (en passant, roque, promoção, xeque-mate)
+- **Multiplayer** — Conexão peer-to-peer sem servidor dedicado
+- **UX completa** — Lobby, chat, reações, histórico de jogadas, peças capturadas
 
-### 1.3 A Hipotese
+### 1.3 A Hipótese
 
-> Se o desenvolvimento for orquestrado por um grafo de tarefas com criterios de aceitacao, estimativas e dependencias bem definidas, a IA consegue compensar a falta de conhecimento do desenvolvedor em dominios especificos (3D, shaders, materiais).
+> Se o desenvolvimento for orquestrado por um grafo de tarefas com critérios de aceitação, estimativas e dependências bem definidas, a IA consegue compensar a falta de conhecimento do desenvolvedor em domínios específicos (3D, shaders, materiais).
 
 ---
 
@@ -90,31 +90,31 @@ Construir um jogo de xadrez 3D nao e apenas renderizar cubos coloridos. Envolve:
 
 ### 2.1 MCP (Model Context Protocol)
 
-O MCP e um protocolo aberto da Anthropic que permite conectar modelos de linguagem a ferramentas externas via servidores especializados. Neste projeto, quatro servidores MCP operaram simultaneamente:
+O MCP é um protocolo aberto da Anthropic que permite conectar modelos de linguagem a ferramentas externas via servidores especializados. Neste projeto, quatro servidores MCP operaram simultaneamente:
 
 ```
 Claude Code (Opus)
     |
-    +-- mcp-graph v6.0    --> Gestao de tarefas, dependencias, sprints
-    +-- context7           --> Documentacao atualizada de bibliotecas
-    +-- blender-mcp        --> Geracao e manipulacao de assets 3D
-    +-- playwright         --> Automacao de testes visuais
+    +-- mcp-graph v6.0    --> Gestão de tarefas, dependências, sprints
+    +-- context7           --> Documentação atualizada de bibliotecas
+    +-- blender-mcp        --> Geração e manipulação de assets 3D
+    +-- playwright         --> Automação de testes visuais
 ```
 
-### 2.2 mcp-graph: O Cerebro do Projeto
+### 2.2 mcp-graph: O Cérebro do Projeto
 
-O mcp-graph v6.0 funcionou como **fonte de verdade absoluta**. Nenhuma linha de codigo foi escrita sem um node correspondente no grafo. O fluxo obrigatorio:
+O mcp-graph v6.0 funcionou como **fonte de verdade absoluta**. Nenhuma linha de código foi escrita sem um node correspondente no grafo. O fluxo obrigatório:
 
 ```
 import_prd --> plan_sprint --> next --> context --> rag_context --> [TDD] --> analyze --> update_status
 ```
 
-**Regras de execucao:**
-- **WIP = 1** — Maximo 1 task em progresso por vez (Lei de Little)
+**Regras de execução:**
+- **WIP = 1** — Máximo 1 task em progresso por vez (Lei de Little)
 - **Pull system** — Tasks puxadas via `next`, nunca empurradas
-- **TDD obrigatorio** — Teste antes do codigo, sem excecao
+- **TDD obrigatório** — Teste antes do código, sem exceção
 - **Definition of Done** — 8 checks automatizados antes de marcar `done`
-- **Phase Gates** — Transicoes entre fases requerem validacao via `analyze`
+- **Phase Gates** — Transições entre fases requerem validação via `analyze`
 
 ### 2.3 Ciclo de Vida (9 Fases)
 
@@ -124,43 +124,43 @@ ANALYZE --> DESIGN --> PLAN --> IMPLEMENT --> VALIDATE --> REVIEW --> HANDOFF --
 
 O projeto percorreu todas as fases em 2 dias:
 1. **ANALYZE** — PRD importado, requisitos definidos (~10 min para criar 89 nodes)
-2. **DESIGN** — 7 ADRs documentando decisoes arquiteturais
-3. **PLAN** — 4 sprints planejados, dependencias mapeadas (217 edges)
+2. **DESIGN** — 7 ADRs documentando decisões arquiteturais
+3. **PLAN** — 4 sprints planejados, dependências mapeadas (217 edges)
 4. **IMPLEMENT** — 64 tasks executadas com TDD
-5. **VALIDATE** — Testes de integracao e criterios de aceitacao
-6. **REVIEW** — Analise de blast radius e metricas
-7. **HANDOFF** — Documentacao e snapshot
-8. **DEPLOY** — Deploy em producao (xadrez.cortexflow.space)
-9. **LISTENING** — Feedback e proximo ciclo
+5. **VALIDATE** — Testes de integração e critérios de aceitação
+6. **REVIEW** — Análise de blast radius e métricas
+7. **HANDOFF** — Documentação e snapshot
+8. **DEPLOY** — Deploy em produção (xadrez.cortexflow.space)
+9. **LISTENING** — Feedback e próximo ciclo
 
 ### 2.4 Anti-Vibe-Coding
 
-O projeto seguiu principios XP rigorosos para evitar o padrao "vibe coding" (gerar codigo sem estrutura):
+O projeto seguiu princípios XP rigorosos para evitar o padrão "vibe coding" (gerar código sem estrutura):
 
-- **Decomposicao atomica** — Cada task completavel em <=2h
+- **Decomposição atômica** — Cada task completável em <=2h
 - **Anti-one-shot** — Nunca gerar sistemas inteiros em um prompt
 - **Code detachment** — Se a IA errou, explicar o erro via prompt
-- **CLAUDE.md como spec evolutiva** — Padroes documentados incrementalmente
+- **CLAUDE.md como spec evolutiva** — Padrões documentados incrementalmente
 
 ---
 
-## 3. Stack Tecnologica
+## 3. Stack Tecnológica
 
-| Tecnologia | Versao | Papel |
+| Tecnologia | Versão | Papel |
 |------------|--------|-------|
 | **React** | 19.2 | Framework UI declarativo |
 | **React Three Fiber** | 9.5 | Bridge React <-> Three.js |
-| **Three.js** | r183 | Engine de renderizacao 3D |
-| **@react-three/drei** | 10.7 | Utilitarios R3F (OrbitControls, loaders, env maps) |
+| **Three.js** | r183 | Engine de renderização 3D |
+| **@react-three/drei** | 10.7 | Utilitários R3F (OrbitControls, loaders, env maps) |
 | **@react-three/postprocessing** | 3.0 | Bloom, color grading, anti-aliasing |
 | **chess.js** | 1.4 | Motor de regras do xadrez |
 | **PeerJS** | 1.5 | WebRTC peer-to-peer simplificado |
 | **Zustand** | 5.0 | State management minimalista |
-| **Howler.js** | 2.2 | Sistema de audio (8 efeitos sonoros) |
-| **Framer Motion** | 12.38 | Animacoes de UI |
-| **React Spring** | 10.0 | Animacoes fisicas para pecas 3D |
-| **Tailwind CSS** | 4.2 | Estilizacao utility-first |
-| **TypeScript** | 5.7 | Tipagem estatica |
+| **Howler.js** | 2.2 | Sistema de áudio (8 efeitos sonoros) |
+| **Framer Motion** | 12.38 | Animações de UI |
+| **React Spring** | 10.0 | Animações físicas para peças 3D |
+| **Tailwind CSS** | 4.2 | Estilização utility-first |
+| **TypeScript** | 5.7 | Tipagem estática |
 | **Vite** | 6.0 | Build tool e dev server |
 | **Vitest** | 4.1 | Framework de testes |
 
@@ -170,50 +170,50 @@ O projeto seguiu principios XP rigorosos para evitar o padrao "vibe coding" (ger
 
 ### 4.1 mcp-graph v6.0 — Orquestrador de Workflow
 
-**Papel:** Gestao completa do ciclo de vida do projeto.
+**Papel:** Gestão completa do ciclo de vida do projeto.
 
 O mcp-graph manteve um banco SQLite (`workflow-graph/graph.db`) com 89 nodes e 217 edges. Cada task tinha:
-- Descricao e criterios de aceitacao (85,4% de cobertura)
-- Estimativa de esforco (total: 74,25 horas)
-- Classificacao de tamanho (S/M/L/XL)
+- Descrição e critérios de aceitação (85,4% de cobertura)
+- Estimativa de esforço (total: 74,25 horas)
+- Classificação de tamanho (S/M/L/XL)
 - Prioridade (P1-P3)
 - Sprint assignment (4 sprints)
-- Dependencias explicitas
+- Dependências explícitas
 
 **Ferramentas mais usadas:**
 - `import_prd` — Importou o PRD inteiro e criou 89 nodes em ~10 minutos
-- `next` — Pull system para puxar a proxima task disponivel
+- `next` — Pull system para puxar a próxima task disponível
 - `context` — Recuperou contexto relevante (73% menos tokens que export)
 - `analyze` — Validou Definition of Done, progress, design readiness
 - `plan_sprint` — Distribuiu tasks em 4 sprints balanceados
 
-### 4.2 context7 — Documentacao em Tempo Real
+### 4.2 context7 — Documentação em Tempo Real
 
-**Papel:** Garantir que o codigo usasse APIs atualizadas.
+**Papel:** Garantir que o código usasse APIs atualizadas.
 
-Quando Claude Code precisava implementar algo com Three.js r183 ou React Three Fiber v9, o context7 buscava a documentacao mais recente da biblioteca — evitando o problema de "training data desatualizado".
+Quando Claude Code precisava implementar algo com Three.js r183 ou React Three Fiber v9, o context7 buscava a documentação mais recente da biblioteca — evitando o problema de "training data desatualizado".
 
-**Casos de uso criticos:**
-- Migracao de `@react-three/fiber` v8 para v9 (breaking changes)
+**Casos de uso críticos:**
+- Migração de `@react-three/fiber` v8 para v9 (breaking changes)
 - API correta de `useGLTF` e `useTexture` do drei
-- Configuracao de `@react-three/postprocessing` v3
+- Configuração de `@react-three/postprocessing` v3
 
 ### 4.3 blender-mcp — Assets 3D
 
-**Papel:** Interface com Blender para geracao de modelos 3D.
+**Papel:** Interface com Blender para geração de modelos 3D.
 
-O blender-mcp foi configurado para gerar pecas de xadrez via:
-- **Hyper3D / Hunyuan3D** — Geracao de modelos a partir de texto/imagens
-- **PolyHaven** — Assets HDRI para iluminacao ambiental
-- **Sketchfab** — Busca de modelos de referencia
+O blender-mcp foi configurado para gerar peças de xadrez via:
+- **Hyper3D / Hunyuan3D** — Geração de modelos a partir de texto/imagens
+- **PolyHaven** — Assets HDRI para iluminação ambiental
+- **Sketchfab** — Busca de modelos de referência
 
-**Dificuldade encontrada:** O addon do Blender MCP nao estava ativo no momento da integracao (detalhado na secao 8).
+**Dificuldade encontrada:** O addon do Blender MCP não estava ativo no momento da integração (detalhado na seção 8).
 
 ### 4.4 Playwright — Testes Visuais
 
-**Papel:** Automacao de testes end-to-end no navegador.
+**Papel:** Automação de testes end-to-end no navegador.
 
-Configurado para validar que o jogo renderizava corretamente apos cada sprint.
+Configurado para validar que o jogo renderizava corretamente após cada sprint.
 
 ---
 
